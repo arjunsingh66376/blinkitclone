@@ -4,56 +4,40 @@ import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Checkoutitemcard, DonationCard, GiftBanner } from '../../component/Cards';
-import { CheckoutAppbar } from '../../component/Appbar'; // Correct import path assuming it's in component/Appbar
-import Orderbutton from '../../component/Orderbutton';
-import { useCart } from '../../context/Cartcontext'; // Import useCart hook
+import { CheckoutAppbar } from '../../component/Appbar';
+import Orderbutton from '../../component/Orderbutton'; // Import Orderbutton
+import { useCart } from '../../context/Cartcontext';
 
 const Cartscreen = () => {
-    // Destructure the original function names from useCart
     const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
 
-    // Calculate total price and savings
     const calculateTotals = () => {
         let itemsTotal = 0;
-        let totalOriginalPriceSum = 0; // To calculate savings from original undoubled price if desired
+        let totalOriginalPriceSum = 0;
 
         cartItems.forEach(item => {
-            const priceNum = parseFloat(item.price) || 0; // This is the current total price for all units of this item
-            const originalUnitPriceNum = parseFloat(item.originalUnitPrice || 0); // The undoubled price per unit
-            const quantity = item.quantity || 1; // Get the actual quantity
+            const priceNum = parseFloat(item.price) || 0;
+            const originalUnitPriceNum = parseFloat(item.originalUnitPrice || 0);
+            const quantity = item.quantity || 1;
 
-            itemsTotal += priceNum; // Sum the current calculated total prices of items
-
-            // Calculate savings based on the original unit price * quantity vs. current price
-            // If an item starts at original 100, doubles to 200 (for qty 1), then qty goes to 2 (price 400).
-            // Savings could be (originalUnitPrice * quantity) - currentPrice, but this would be negative.
-            // Let's assume 'savings' is what you *saved* from a higher potential price.
-            // The initial 'double on add' is not a saving.
-            // The only explicit saving mentioned is free delivery.
-            // Let's simplify and make the savings display mostly about the free delivery.
-            // If you want per-item savings for items where the price drops *below* the doubled initial price,
-            // we'd need another field like `discountedFromDoubledPrice`.
-            totalOriginalPriceSum += (originalUnitPriceNum * quantity); // Sum original undoubled total for all items
+            itemsTotal += priceNum;
+            totalOriginalPriceSum += (originalUnitPriceNum * quantity);
         });
 
-        const explicitDeliverySaving = 25; // From "Includes ₹25 savings through free delivery"
-        const handlingCharge = 2; // Fixed
+        const explicitDeliverySaving = 25;
+        const handlingCharge = 2; // This is the fixed ₹2 you want to add
 
-        // If you want "savings" to reflect the "cost" of doubling, or actual discounts later, refine this.
-        // For now, let's just make sure `itemsTotal` is correct, and savings is from delivery.
-        // If you still want to show `Saved ₹X` next to "Items total", let's define what 'X' is.
-        // If it means "saved from original price", then:
         const potentialSavingsFromOriginal = totalOriginalPriceSum - itemsTotal;
-        const netSavings = explicitDeliverySaving + Math.max(0, potentialSavingsFromOriginal); // Add item-level savings if positive
+        const netSavings = explicitDeliverySaving + Math.max(0, potentialSavingsFromOriginal);
 
-        const grandTotal = itemsTotal + handlingCharge; // Delivery is free (0)
+        // grandTotal already includes handlingCharge
+        const grandTotal = itemsTotal + handlingCharge;
 
         return { itemsTotal, savings: netSavings, deliveryCharge: 0, handlingCharge, grandTotal };
     };
 
     const { itemsTotal, savings, deliveryCharge, handlingCharge, grandTotal } = calculateTotals();
 
-    // Use the original function names
     const handleIncreaseQuantity = (title) => {
         increaseQuantity(title);
         console.log("Quantity increased for:", title);
@@ -71,28 +55,23 @@ const Cartscreen = () => {
 
     return (
         <SafeAreaView style={{ flex: 1, padding: 10, backgroundColor: 'white' }}>
-            {/* checkout app bar */}
             <CheckoutAppbar />
 
-            {/* checkout title */}
             <View style={styles.checkoutheadingwrapper}>
                 <Text style={styles.checkoutheading}>Deliver in 8 minutes</Text>
             </View>
 
-            {/* Main Scrollable Content */}
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
-                {/* Checkout item cards */}
                 {cartItems.length > 0 ? (
                     cartItems.map((item, index) => (
                         <Checkoutitemcard
-                            key={item.title || index} // Use title as key if unique, otherwise index
+                            key={item.title || index}
                             imageSource={item.productImage || item.imageSource}
                             title={item.title}
-                            // Pass originalUnitPrice for display if you want to show it struck out
-                            originalPrice={item.originalUnitPrice} // Now passing the undoubled unit price for context
-                            price={item.price} // This is the total price for the current quantity of this item
+                            originalPrice={item.originalUnitPrice}
+                            price={item.price}
                             weight={item.weight || 'N/A'}
-                            quantity={item.quantity} // Pass the actual quantity from the state
+                            quantity={item.quantity}
                             onIncrease={() => handleIncreaseQuantity(item.title)}
                             onDecrease={() => handleDecreaseQuantity(item.title)}
                             onDelete={() => handleDeleteButton(item.title)}
@@ -102,20 +81,15 @@ const Cartscreen = () => {
                     <Text style={styles.emptyCartText}>Your cart is empty. Add some items!</Text>
                 )}
 
-
-                {/* make a gift banner */}
                 <GiftBanner onPressSelect={handleselectgift} />
 
-                {/* bill details section */}
                 <View style={styles.billContainer}>
                     <Text style={styles.billHeaderText}>Bill details</Text>
 
-                    {/* Items total row */}
                     <View style={styles.billRow}>
                         <View style={styles.billRowLeft}>
                             <MaterialCommunityIcons name="file-document-outline" size={18} color="#333" style={styles.billIcon} />
                             <Text style={styles.billRowLabel}>Items total</Text>
-                            {/* Display savings here, if calculated positively from original */}
                             {savings > 0 && <Text style={styles.billSavedText}>Saved ₹{savings.toFixed(0)}</Text>}
                         </View>
                         <View style={styles.billRowRight}>
@@ -123,7 +97,6 @@ const Cartscreen = () => {
                         </View>
                     </View>
 
-                    {/* Delivery charge row */}
                     <View style={styles.billRow}>
                         <View style={styles.billRowLeft}>
                             <MaterialCommunityIcons name="truck-outline" size={18} color="#333" style={styles.billIcon} />
@@ -135,7 +108,6 @@ const Cartscreen = () => {
                         </View>
                     </View>
 
-                    {/* Handling charge row */}
                     <View style={styles.billRow}>
                         <View style={styles.billRowLeft}>
                             <MaterialCommunityIcons name="bag-personal-outline" size={18} color="#333" style={styles.billIcon} />
@@ -148,13 +120,11 @@ const Cartscreen = () => {
 
                     <View style={styles.billDivider} />
 
-                    {/* Grand total row */}
                     <View style={styles.billGrandTotalRow}>
                         <Text style={styles.billGrandTotalLabel}>Grand total</Text>
                         <Text style={styles.billGrandTotalPrice}>₹{grandTotal.toFixed(0)}</Text>
                     </View>
 
-                    {/* Savings section */}
                     {savings > 0 && (
                         <View style={styles.billSavingsContainer}>
                             <Text style={styles.billSavingsText}>Your total savings</Text>
@@ -165,7 +135,6 @@ const Cartscreen = () => {
                         Includes ₹25 savings through free delivery
                     </Text>
 
-                    {/* Add GSTIN section */}
                     <TouchableOpacity style={styles.billGstinButton}>
                         <View style={styles.billGstinLeft}>
                             <View style={styles.billGstinIconWrapper}>
@@ -181,10 +150,10 @@ const Cartscreen = () => {
                         <Ionicons name="chevron-forward-outline" size={20} color="#888" />
                     </TouchableOpacity>
                 </View>
-                {/* donation card */}
                 <DonationCard />
             </ScrollView>
-            <Orderbutton />
+            {/* Pass the grandTotal to the Orderbutton */}
+            <Orderbutton totalPrice={grandTotal.toFixed(0)} />
         </SafeAreaView>
     );
 };
@@ -221,7 +190,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#888',
     },
-    // Styling for bill section - Prefixed with 'bill' to avoid conflicts
     billContainer: {
         backgroundColor: '#FFFFFF',
         borderRadius: 10,
@@ -259,7 +227,7 @@ const styles = StyleSheet.create({
     },
     billSavedText: {
         fontSize: 12,
-        color: '#52B788', // Green color
+        color: '#52B788',
         marginLeft: 8,
         fontWeight: '600',
     },
@@ -281,10 +249,10 @@ const styles = StyleSheet.create({
     billFreeText: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: '#52B788', // Green color for FREE
+        color: '#52B788',
     },
     billDivider: {
-        height: 1, // Placeholder for the wavy line
+        height: 1,
         backgroundColor: '#EEEEEE',
         marginVertical: 15,
     },
@@ -308,14 +276,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#E0F7FA', // Light blue background for savings
+        backgroundColor: '#E0F7FA',
         borderRadius: 8,
         padding: 10,
         marginBottom: 5,
     },
     billSavingsText: {
         fontSize: 14,
-        color: '#007B8A', // Darker blue/green for savings text
+        color: '#007B8A',
         fontWeight: '600',
     },
     billSavingsAmount: {
@@ -333,7 +301,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#F5F5F5', // Light gray background
+        backgroundColor: '#F5F5F5',
         borderRadius: 10,
         padding: 15,
         marginTop: 10,
@@ -352,7 +320,7 @@ const styles = StyleSheet.create({
         width: 35,
         height: 35,
         borderRadius: 10,
-        backgroundColor: '#EBF5FB', // Very light blue background for the icon
+        backgroundColor: '#EBF5FB',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 10,
