@@ -1,15 +1,24 @@
 // src/screens/Cartscreen.js
 import { SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Checkoutitemcard, DonationCard, GiftBanner } from '../../component/Cards';
-import { CheckoutAppbar } from '../../component/Appbar';
-import Orderbutton from '../../component/Orderbutton'; // Import Orderbutton
+import { CheckoutAppbar } from '../../component/Appbar'; // Correct import path
+import Orderbutton from '../../component/Orderbutton';
 import { useCart } from '../../context/Cartcontext';
+
+// <--- NEW: Import useNavigation
+import { useNavigation } from '@react-navigation/native';
+
+import Toast from 'react-native-toast-message';
 
 const Cartscreen = () => {
     const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
+    // <--- NEW: Get navigation object
+    const navigation = useNavigation();
+
+    const [isGiftSelected, setIsGiftSelected] = useState(false);
 
     const calculateTotals = () => {
         let itemsTotal = 0;
@@ -25,20 +34,19 @@ const Cartscreen = () => {
         });
 
         const explicitDeliverySaving = 25;
-        const handlingCharge = 2; // This is the fixed ₹2 you want to add
+        const handlingCharge = 2;
+        const giftWrappingCharge = isGiftSelected ? 30 : 0;
 
         const potentialSavingsFromOriginal = totalOriginalPriceSum - itemsTotal;
         const netSavings = explicitDeliverySaving + Math.max(0, potentialSavingsFromOriginal);
 
-        // grandTotal already includes handlingCharge
-        const grandTotal = itemsTotal + handlingCharge;
+        const grandTotal = itemsTotal + handlingCharge + giftWrappingCharge;
 
-        return { itemsTotal, savings: netSavings, deliveryCharge: 0, handlingCharge, grandTotal };
+        return { itemsTotal, savings: netSavings, deliveryCharge: 0, handlingCharge, grandTotal, giftWrappingCharge };
     };
 
-    const { itemsTotal, savings, deliveryCharge, handlingCharge, grandTotal } = calculateTotals();
+    const { itemsTotal, savings, deliveryCharge, handlingCharge, grandTotal, giftWrappingCharge } = calculateTotals();
 
-    // --- NEW: Determine if the cart is empty ---
     const isCartEmpty = cartItems.length === 0;
 
     const handleIncreaseQuantity = (title) => {
@@ -54,11 +62,41 @@ const Cartscreen = () => {
         console.log("Item removed from cart:", title);
     };
 
-    const handleselectgift = () => console.log('Gift selected!');
+    const handleselectgift = () => {
+        const newState = !isGiftSelected;
+        setIsGiftSelected(newState);
+
+        if (newState) {
+            Toast.show({
+                type: 'success',
+                text1: 'Gift Option Selected!',
+                text2: 'Your item will be packed in a special gift bag.',
+                visibilityTime: 3000,
+                autoHide: true,
+                topOffset: 30,
+            });
+        } else {
+            Toast.show({
+                type: 'info',
+                text1: 'Gift Option Removed!',
+                text2: 'Gift wrapping has been deselected.',
+                visibilityTime: 2000,
+                autoHide: true,
+                topOffset: 30,
+            });
+        }
+        console.log('Gift selected state:', newState);
+    };
+
+    // <--- NEW: Handler for the back button
+    const handleBackPress = () => {
+        navigation.goBack(); // This navigates to the previous screen in the stack
+    };
 
     return (
         <SafeAreaView style={{ flex: 1, padding: 10, backgroundColor: 'white' }}>
-            <CheckoutAppbar />
+            {/* Pass the handleBackPress function to onBackPress prop */}
+            <CheckoutAppbar onBackPress={handleBackPress} />
 
             <View style={styles.checkoutheadingwrapper}>
                 <Text style={styles.checkoutheading}>Deliver in 8 minutes</Text>
@@ -84,7 +122,7 @@ const Cartscreen = () => {
                     <Text style={styles.emptyCartText}>Your cart is empty. Add some items!</Text>
                 )}
 
-                <GiftBanner onPressSelect={handleselectgift} />
+                <GiftBanner onPressSelect={handleselectgift} isSelected={isGiftSelected} />
 
                 <View style={styles.billContainer}>
                     <Text style={styles.billHeaderText}>Bill details</Text>
@@ -121,6 +159,18 @@ const Cartscreen = () => {
                         </View>
                     </View>
 
+                    {isGiftSelected && (
+                        <View style={styles.billRow}>
+                            <View style={styles.billRowLeft}>
+                                <MaterialCommunityIcons name="gift-outline" size={18} color="#333" style={styles.billIcon} />
+                                <Text style={styles.billRowLabel}>Gift wrapping</Text>
+                            </View>
+                            <View style={styles.billRowRight}>
+                                <Text style={styles.billPriceText}>₹{giftWrappingCharge.toFixed(0)}</Text>
+                            </View>
+                        </View>
+                    )}
+
                     <View style={styles.billDivider} />
 
                     <View style={styles.billGrandTotalRow}>
@@ -155,7 +205,6 @@ const Cartscreen = () => {
                 </View>
                 <DonationCard />
             </ScrollView>
-            {/* Pass the grandTotal AND the new isCartEmpty prop to the Orderbutton */}
             <Orderbutton totalPrice={grandTotal.toFixed(0)} isCartEmpty={isCartEmpty} />
         </SafeAreaView>
     );

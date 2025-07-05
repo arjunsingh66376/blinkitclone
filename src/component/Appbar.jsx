@@ -61,7 +61,7 @@ export default Appbar
     <View style={styles.appbarContainer}>
       {/* Back Arrow */}
       <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
-        <Ionicons name="arrow-back" size={24} color="#333" />
+        <Ionicons name="arrow-back" size={32} color="#333" />
       </TouchableOpacity>
 
       {/* Title */}
