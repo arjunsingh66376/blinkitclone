@@ -10,6 +10,7 @@ import auth from '@react-native-firebase/auth'; // Import Firebase auth
 // Your screen imports
 import Bottomtabnavigation from './src/navigation/Bottomtabnavigation';
 import Loginscreen from './src/screens/login/Loginscreen'; // Import your LoginScreen
+import { CartProvider } from './src/context/Cartcontext';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,6 +61,8 @@ const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
+        <CartProvider>
+
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/* Conditional rendering based on local state, which Loginscreen will update */}
@@ -76,6 +79,7 @@ const App = () => {
             )}
           </Stack.Navigator>
         </NavigationContainer>
+            </CartProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

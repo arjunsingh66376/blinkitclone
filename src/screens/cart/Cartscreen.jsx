@@ -1,67 +1,102 @@
+// src/screens/Cartscreen.js
 import { SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import React from 'react';
-// Import MaterialCommunityIcons and Ionicons as they are used in the inline bill details section
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Checkoutitemcard, DonationCard, GiftBanner } from '../../component/Cards'; // Assuming these are also from Cards.js or similar
-
-import img360 from '../../../assets/images/img360.png';
-import img300 from '../../../assets/images/img300.png';
-import img310 from '../../../assets/images/img310.png';
+import { Checkoutitemcard, DonationCard, GiftBanner } from '../../component/Cards';
 import { CheckoutAppbar } from '../../component/Appbar';
 import Orderbutton from '../../component/Orderbutton';
-
+import { useCart } from '../../context/Cartcontext'; // Import useCart hook
 
 const Cartscreen = () => {
+  const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
 
-  const handleincreasebtn = () => console.log("item is increased");
-  const handledecreasebtn = () => console.log("item is decreased");
+  // Calculate total price and savings
+  const calculateTotals = () => {
+    let itemsTotal = 0;
+    let savings = 0;
+
+    cartItems.forEach(item => {
+      const priceNum = parseFloat(item.price);
+      const originalPriceNum = item.originalPrice ? parseFloat(item.originalPrice) : priceNum;
+      const quantity = item.quantity || 1; // Default to 1 if quantity is not set
+
+      itemsTotal += priceNum * quantity;
+      savings += (originalPriceNum - priceNum) * quantity;
+    });
+
+    const deliveryCharge = 0; // Assuming free delivery based on your bill details
+    const handlingCharge = 2; // From your bill details
+
+    const grandTotal = itemsTotal + handlingCharge + deliveryCharge;
+
+    return { itemsTotal, savings, deliveryCharge, handlingCharge, grandTotal };
+  };
+
+  const { itemsTotal, savings, deliveryCharge, handlingCharge, grandTotal } = calculateTotals();
+
+  const handleincreasebtn = (title) => {
+    increaseQuantity(title);
+    console.log("item is increased for:", title);
+  };
+  const handledecreasebtn = (title) => {
+    decreaseQuantity(title);
+    console.log("item is decreased for:", title);
+  };
   const handleselectgift = () => console.log('item is selected');
-  const handletitlepress = () => console.log('title   banener   is pressed');
-  const handledonationaddpress = () => console.log(' add btn   is pressed');
+  const handletitlepress = () => console.log('title banener is pressed'); // This seems unused
+  const handledonationaddpress = () => console.log('add btn is pressed'); // This seems unused
 
   return (
     <SafeAreaView style={{ flex: 1, padding: 10, backgroundColor: 'white' }}>
-      {/* checkout app bar   */}
-      <CheckoutAppbar/>
+      {/* checkout app bar */}
+      <CheckoutAppbar />
 
       {/* checkout title ======================================================================= */}
       <View style={styles.checkoutheadingwrapper}>
-        {/* FIX: Wrapped "Deliver in 8 minutes" */}
         <Text style={styles.checkoutheading}>Deliver in 8 minutes</Text>
       </View>
 
       {/* Main Scrollable Content */}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
         {/* Checkout item cards */}
-        <Checkoutitemcard imageSource={img360} title={'coco-cola soft drinks'} originalPrice={"40"} price={"30"} quantity={"2"} onIncrease={handleincreasebtn} onDecrease={handledecreasebtn} />
-        <Checkoutitemcard imageSource={img300} title={'Oats & Muslie'} originalPrice={"100"} price={"50"} quantity={"1"} onIncrease={handleincreasebtn} onDecrease={handledecreasebtn} />
-        <Checkoutitemcard imageSource={img310} title={'Mixer Grinder'} originalPrice={"1000"} price={"300"} quantity={"5"} onIncrease={handleincreasebtn} onDecrease={handledecreasebtn} />
+        {cartItems.length > 0 ? (
+          cartItems.map((item, index) => (
+            <Checkoutitemcard
+              key={index} // Use a unique key for each item
+              imageSource={item.productImage || item.imageSource} // Use productImage or imageSource
+              title={item.title}
+              originalPrice={item.originalPrice}
+              price={item.price}
+              weight={item.weight || 'N/A'} // Add a default weight if not provided
+              quantity={item.quantity}
+              onIncrease={() => handleincreasebtn(item.title)}
+              onDecrease={() => handledecreasebtn(item.title)}
+            />
+          ))
+        ) : (
+          <Text style={styles.emptyCartText}>Your cart is empty. Add some items!</Text>
+        )}
+
 
         {/* make a gift banner =================================================================== */}
         <GiftBanner onPressSelect={handleselectgift} />
 
         {/* bill details section =================================================================== */}
-        {/* Using styles directly from the StyleSheet defined below */}
         <View style={styles.billContainer}>
-          {/* Bill details header */}
-          {/* FIX: Wrapped "Bill details" */}
           <Text style={styles.billHeaderText}>Bill details</Text>
 
           {/* Items total row */}
           <View style={styles.billRow}>
             <View style={styles.billRowLeft}>
               <MaterialCommunityIcons name="file-document-outline" size={18} color="#333" style={styles.billIcon} />
-              {/* FIX: Wrapped "Items total" */}
               <Text style={styles.billRowLabel}>Items total</Text>
-              {/* FIX: Wrapped "Saved ₹51" */}
-              <Text style={styles.billSavedText}>Saved ₹51</Text>
+              {savings > 0 && <Text style={styles.billSavedText}>Saved ₹{savings.toFixed(0)}</Text>}
             </View>
             <View style={styles.billRowRight}>
-              {/* FIX: Wrapped "₹529" */}
-              <Text style={styles.billStrikethroughText}>₹529</Text>
-              {/* FIX: Wrapped "₹478" */}
-              <Text style={styles.billPriceText}>₹478</Text>
+              {/* Original price for items total (if applicable) - depends on how you want to calculate it */}
+              {/* <Text style={styles.billStrikethroughText}>₹{originalItemsTotal.toFixed(0)}</Text> */}
+              <Text style={styles.billPriceText}>₹{itemsTotal.toFixed(0)}</Text>
             </View>
           </View>
 
@@ -69,13 +104,11 @@ const Cartscreen = () => {
           <View style={styles.billRow}>
             <View style={styles.billRowLeft}>
               <MaterialCommunityIcons name="truck-outline" size={18} color="#333" style={styles.billIcon} />
-              {/* FIX: Wrapped "Delivery charge" */}
               <Text style={styles.billRowLabel}>Delivery charge</Text>
             </View>
             <View style={styles.billRowRight}>
-              {/* FIX: Wrapped "₹25" */}
+              {/* You had ₹25 strikethrough, then FREE. Implement logic if delivery isn't always free */}
               <Text style={styles.billStrikethroughText}>₹25</Text>
-              {/* FIX: Wrapped "FREE" */}
               <Text style={styles.billFreeText}>FREE</Text>
             </View>
           </View>
@@ -84,34 +117,28 @@ const Cartscreen = () => {
           <View style={styles.billRow}>
             <View style={styles.billRowLeft}>
               <MaterialCommunityIcons name="bag-personal-outline" size={18} color="#333" style={styles.billIcon} />
-              {/* FIX: Wrapped "Handling charge" */}
               <Text style={styles.billRowLabel}>Handling charge</Text>
             </View>
             <View style={styles.billRowRight}>
-              {/* FIX: Wrapped "₹2" */}
-              <Text style={styles.billPriceText}>₹2</Text>
+              <Text style={styles.billPriceText}>₹{handlingCharge.toFixed(0)}</Text>
             </View>
           </View>
 
-          {/* Wavy divider - Placeholder for a more complex SVG or custom drawing */}
           <View style={styles.billDivider} />
 
           {/* Grand total row */}
           <View style={styles.billGrandTotalRow}>
-            {/* FIX: Wrapped "Grand total" */}
             <Text style={styles.billGrandTotalLabel}>Grand total</Text>
-            {/* FIX: Wrapped "₹480" */}
-            <Text style={styles.billGrandTotalPrice}>₹480</Text>
+            <Text style={styles.billGrandTotalPrice}>₹{grandTotal.toFixed(0)}</Text>
           </View>
 
           {/* Savings section */}
-          <View style={styles.billSavingsContainer}>
-            {/* FIX: Wrapped "Your total savings" */}
-            <Text style={styles.billSavingsText}>Your total savings</Text>
-            {/* FIX: Wrapped "₹76" */}
-            <Text style={styles.billSavingsAmount}>₹76</Text>
-          </View>
-          {/* This text is already wrapped in <Text> */}
+          {savings > 0 && (
+            <View style={styles.billSavingsContainer}>
+              <Text style={styles.billSavingsText}>Your total savings</Text>
+              <Text style={styles.billSavingsAmount}>₹{savings.toFixed(0)}</Text>
+            </View>
+          )}
           <Text style={styles.billSavingsIncludesText}>
             Includes ₹25 savings through free delivery
           </Text>
@@ -123,9 +150,7 @@ const Cartscreen = () => {
                 <MaterialCommunityIcons name="percent" size={20} color="#3498db" />
               </View>
               <View>
-                {/* FIX: Wrapped "Add GSTIN" */}
                 <Text style={styles.billGstinMainText}>Add GSTIN</Text>
-                {/* FIX: Wrapped "Claim GST input credit up to 28% on your order" */}
                 <Text style={styles.billGstinSubText}>
                   Claim GST input credit up to 28% on your order
                 </Text>
@@ -136,11 +161,10 @@ const Cartscreen = () => {
         </View>
         {/* ============================================================================ */}
         {/* donation card */}
-        <DonationCard/>
+        <DonationCard />
         {/* ============================================================================= */}
-        {/* order placed   buttton */}
       </ScrollView>
-        <Orderbutton />
+      <Orderbutton />
     </SafeAreaView>
   );
 };
@@ -149,22 +173,18 @@ export default Cartscreen;
 
 const styles = StyleSheet.create({
   checkoutheadingwrapper: {
-    // height: 40,
-    // width: '90%', // Changed to 100% for better responsiveness
     justifyContent: "center",
     alignItems: 'flex-start',
-    paddingHorizontal: 10, // Added padding
+    paddingHorizontal: 10,
     width: '100%',
-      backgroundColor: '#fff',
-      borderRadius: 12,
-      marginHorizontal: 10,
-      marginBottom: 10,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      // overflow: 'hidden',
-
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   checkoutheading: {
     fontSize: 20,
@@ -172,10 +192,15 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   scrollViewContent: {
-    flexGrow: 1, // Allows content to grow and enable scrolling
-    paddingBottom: 20, // Add some padding at the bottom of the scroll view
+    flexGrow: 1,
+    paddingBottom: 20,
   },
-  // ==========================================================================================
+  emptyCartText: {
+    textAlign: 'center',
+    marginTop: 50,
+    fontSize: 16,
+    color: '#888',
+  },
   // Styling for bill section - Prefixed with 'bill' to avoid conflicts
   billContainer: {
     backgroundColor: '#FFFFFF',

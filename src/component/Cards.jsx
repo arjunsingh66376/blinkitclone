@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity,ImageBackground } from 'react-native';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -70,8 +70,8 @@ export const ItemCard = ({
   );
 };
 // ==========================================================================================
-// grocery cards
-  export const GroceryCard = ({ imageSource, title }) => {
+// grocery cards 
+ export const GroceryCard = ({ imageSource, title }) => {
   return (
     <View style={styles.grocerycard}>
       <Image source={imageSource} style={styles.groceryimage} resizeMode="contain" />
@@ -81,7 +81,7 @@ export const ItemCard = ({
 };
 // =========================================================================================
 //  checkoutitemcard
-  export const Checkoutitemcard = ({ imageSource, title, weight, price, originalPrice, quantity, onIncrease, onDecrease,}) => {
+ export const Checkoutitemcard = ({ imageSource, title, weight, price, originalPrice, quantity, onIncrease, onDecrease,}) => {
   return (
     <View style={styles.checkoutcard}>
       {/* Left Image */}
@@ -120,8 +120,8 @@ export const ItemCard = ({
 };
 
 // =========================================================================================
-// gift banner  card
-  export const GiftBanner = ({ onPressSelect }) => {
+// gift banner  card 
+ export const GiftBanner = ({ onPressSelect }) => {
   return (
     <View style={styles.bannerContainer}>
       {/* Gift Bag Image */}
@@ -158,16 +158,16 @@ export const ItemCard = ({
   <Text style={[styles.donationtitle, { fontWeight: 'bold' }]}>Feeding India</Text>
   <Ionicons name="arrow-forward" size={14} color="#333" style={{ marginLeft: 6 }} />
 </View>
-
+    
             <Text style={styles.donationsubtitle}>
               Your continued support will help us serve daily meals to children
             </Text>
             <Text style={styles.donationLabel}>Donation Now</Text>
             <TouchableOpacity style={styles.donationbtn}>
-              <Text style={styles.taptext}>Tap Here</Text> {/* FIX APPLIED HERE */}
+              <Text style={styles.taptext}>Tap Here</Text>
             </TouchableOpacity>
           </View>
-
+    
           {/* Right image */}
           <Image
             source={require('../../assets/images/children.jpg')}
@@ -176,7 +176,7 @@ export const ItemCard = ({
         </View>
       );
     };
-
+    
 
 const styles = StyleSheet.create({
     // --- Styles for the 'Cards' component (Diwali Sale cards) ---
@@ -217,10 +217,10 @@ const styles = StyleSheet.create({
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
-
+      
       overflow: 'hidden',
     },
-
+    
     imageWrapper: {
       position: 'relative',
       width: '100%',
@@ -228,13 +228,13 @@ const styles = StyleSheet.create({
      borderRadius:14,
       overflow: 'hidden',
     },
-
+    
     productImage: {
       width: '100%',
       height: '100%',
       resizeMode: 'cover',
     },
-
+    
     addButton: {
       position: 'absolute',
       bottom: 8,
@@ -246,18 +246,18 @@ const styles = StyleSheet.create({
       paddingHorizontal: 12,
       paddingVertical: 3,
     },
-
+    
     addButtonText: {
       color: '#28a745',
       fontSize: 12,
       fontWeight: 'bold',
     },
-
+    
     detailsContainer: {
       paddingHorizontal: 10,
       paddingVertical: 8,
     },
-
+    
     titleText: {
       fontSize: 13,
       fontWeight: '600',
@@ -265,28 +265,28 @@ const styles = StyleSheet.create({
       marginBottom: 4,
       lineHeight: 18,
     },
-
+    
     deliveryTimeContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 4,
     },
-
+    
     deliveryTimeText: {
       fontSize: 12,
       color: '#666',
       marginLeft: 4,
     },
-
+    
     priceText: {
       fontSize: 16,
       fontWeight: 'bold',
       color: '#000',
     },
-
+    
 
 // ========================================================================================
-    //  style for grocerycard
+    //  style for grocerycard 
     grocerycard: {
       width: 110,
       height: 140,
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
       color: '#000',
     },
     // =================================================================================================
-    // styling for  checkout item card
+    // styling for  checkout item card 
     checkoutcard: {
       flexDirection: 'row',
       padding: 12,
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
       color: '#52B788', // Green text
     },
     // =======================================================================================
-    // donation  banner styling
+    // donation  banner styling 
    donationcard: {
       backgroundColor: '#F2D2BD',
       borderRadius: 16,
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
       fontSize: 13,
       color: '#4f4f4f',
       lineHeight: 18,
-
+      
     },
     donationLabel: {
       marginTop: 16,
