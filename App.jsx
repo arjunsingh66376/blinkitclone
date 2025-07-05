@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth'; // Import Firebase auth
+import Toast from 'react-native-toast-message';
 
 // Your screen imports
 import Bottomtabnavigation from './src/navigation/Bottomtabnavigation';
@@ -62,7 +63,6 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <CartProvider>
-
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/* Conditional rendering based on local state, which Loginscreen will update */}
@@ -80,6 +80,7 @@ const App = () => {
           </Stack.Navigator>
         </NavigationContainer>
             </CartProvider>
+            <Toast />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

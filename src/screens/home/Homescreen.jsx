@@ -2,7 +2,7 @@
 import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import Appbar from '../../component/Appbar';
-import Cards, { CategoryCard, GroceryCard, ItemCard } from '../../component/Cards'; // Keep CategoryCard if used elsewhere
+import Cards, { CategoryCard, GroceryCard, ItemCard } from '../../component/Cards';
 import img110 from '../../../assets/images/img110.png';
 import img120 from '../../../assets/images/img120.png';
 import img130 from '../../../assets/images/img130.png';
@@ -20,23 +20,42 @@ import img260 from '../../../assets/images/img260.png';
 import img270 from '../../../assets/images/img270.png';
 
 import { ScrollView } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import { useCart } from '../../context/Cartcontext'; // Import useCart hook
+import { useNavigation } from '@react-navigation/native';
+import { useCart } from '../../context/Cartcontext';
+
+// <--- NEW: Import Toast
+import Toast from 'react-native-toast-message';
 
 const Homescreen = () => {
-  const navigation = useNavigation(); // Get navigation object
-  const { addToCart } = useCart(); // Use the addToCart function from context
+  const navigation = useNavigation();
+  const { addToCart } = useCart();
 
   const handleAddItem = (item) => {
     addToCart(item);
     console.log('Item added to cart:', item.title);
-    // Optionally navigate to cart or show a toast notification
+    // <--- NEW: Show toast notification for ItemCard adds
+    Toast.show({
+      type: 'success', // or 'info', 'error'
+      text1: 'Item Added to Cart!',
+      text2: `${item.title} has been added.`,
+      visibilityTime: 2000, // 2 seconds
+      autoHide: true,
+      topOffset: 30, // Adjust position as needed
+    });
   };
 
   const handleGroceryCardPress = (item) => {
     addToCart(item);
     console.log('Grocery item added to cart:', item.title);
-    // Optionally navigate to cart or show a toast notification
+    // <--- NEW: Show toast notification for GroceryCard taps
+    Toast.show({
+      type: 'success',
+      text1: 'Grocery Added to Cart!',
+      text2: `${item.title} has been added.`,
+      visibilityTime: 2000,
+      autoHide: true,
+      topOffset: 30,
+    });
   };
 
   return (
@@ -102,28 +121,28 @@ const Homescreen = () => {
           <View style={styles.grocerywrapper}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {/* Add an onPress to GroceryCard */}
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Vegetables & Fruits', imageSource: img200, price: '?', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Vegetables & Fruits', imageSource: img200, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img200} title='Vegetables & Fruits' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Atta, Dal & Rice', imageSource: img210, price: '?', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Atta, Dal & Rice', imageSource: img210, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img210} title='Atta, Dal & Rice' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Oil, Ghee & Masala', imageSource: img220, price: '?', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Oil, Ghee & Masala', imageSource: img220, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img220} title='Oil, Ghee & Masala' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Dairy, Bread & Milk', imageSource: img230, price: '?', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Dairy, Bread & Milk', imageSource: img230, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img230} title='Dairy, Bread & Milk' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Cucumbers', imageSource: img240, price: '?', weight: '1 kg' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Cucumbers', imageSource: img240, price: '0', weight: '1 kg' })}>
                 <GroceryCard imageSource={img240} title='Cucumbers' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Apples', imageSource: img250, price: '?', weight: '1 kg' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Apples', imageSource: img250, price: '0', weight: '1 kg' })}>
                 <GroceryCard imageSource={img250} title='Apples' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Chocolates', imageSource: img260, price: '?', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Chocolates', imageSource: img260, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img260} title='Chocolates' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Kurkure', imageSource: img170, price: '?', weight: '1 pack' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Kurkure', imageSource: img170, price: '0', weight: '1 pack' })}>
                 <GroceryCard imageSource={img170} title='Kurkure' />
               </TouchableOpacity>
             </ScrollView>
@@ -142,8 +161,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#EC0505',
     paddingHorizontal: 10
-
-
   },
   offerheadingrow: {
     width: '100%',
@@ -151,7 +168,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-
   },
   img1wrapper: {
     width: 100,
@@ -173,7 +189,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: "white"
   },
-
   img2wrapper: {
     width: 100,
     height: 59,
@@ -207,23 +222,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginRight: 20,
     marginTop: 20
-
-
   },
   grocerytext: {
     fontSize: 17,
     fontWeight: "bold",
     paddingHorizontal: 20,
-
   },
   grocerywrapper: {
     flex: 1,
     marginVertical: 15,
     display: 'flex',
     flexDirection: "row",
-
   },
-
-
-
 });
