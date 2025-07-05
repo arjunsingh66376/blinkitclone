@@ -1,8 +1,11 @@
 // src/component/Cards.js
-import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Linking } from 'react-native';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+
+
+
 
 // Import your image assets for the "Diwali Sale" cards
 import imgdiya from '../../assets/images/imgdiya.png';
@@ -188,6 +191,23 @@ export const GiftBanner = ({ onPressSelect }) => {
 // =====================================================================================
 // donation banner card
 export const DonationCard = () => {
+    // Define the URL for the donation page
+    const donationUrl = 'https://khushii.org/donate-2/?source=ICS_GA_GrantG&gad_source=1&gad_campaignid=19204904773&gbraid=0AAAAADKsY86-vis0b6lI0iqVlRBg7L51&gclid=Cj0KCQjwmqPDBhCAARIsADorxIYfFeax9SmWKR-6tBfzJFElLsExluU8UXq5YUwq1an9Z_KeHkEG-jIaAooQEALw_wcB';
+
+    // Function to handle opening the URL
+    const handleTapHerePress = async () => {
+        try {
+            // Directly attempt to open the URL without checking canOpenURL()
+            // For standard http/https links, this is often more reliable
+            await Linking.openURL(donationUrl);
+        } catch (error) {
+            console.error("An error occurred while trying to open the URL:", error);
+            // Optionally, show an alert to the user that the link couldn't be opened
+            // import { Alert } from 'react-native'; at the top if you use Alert
+            // Alert.alert('Error', "Could not open the donation link. Please try again later.");
+        }
+    };
+
     return (
         <View style={styles.donationcard}>
             {/* Left content section */}
@@ -202,7 +222,8 @@ export const DonationCard = () => {
                     Your continued support will help us serve daily meals to children
                 </Text>
                 <Text style={styles.donationLabel}>Donation Now</Text>
-                <TouchableOpacity style={styles.donationbtn}>
+                {/* Apply the onPress handler here */}
+                <TouchableOpacity style={styles.donationbtn} onPress={handleTapHerePress}>
                     <Text style={styles.taptext}>Tap Here</Text>
                 </TouchableOpacity>
             </View>

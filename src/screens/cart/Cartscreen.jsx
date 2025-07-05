@@ -38,6 +38,9 @@ const Cartscreen = () => {
 
     const { itemsTotal, savings, deliveryCharge, handlingCharge, grandTotal } = calculateTotals();
 
+    // --- NEW: Determine if the cart is empty ---
+    const isCartEmpty = cartItems.length === 0;
+
     const handleIncreaseQuantity = (title) => {
         increaseQuantity(title);
         console.log("Quantity increased for:", title);
@@ -152,8 +155,8 @@ const Cartscreen = () => {
                 </View>
                 <DonationCard />
             </ScrollView>
-            {/* Pass the grandTotal to the Orderbutton */}
-            <Orderbutton totalPrice={grandTotal.toFixed(0)} />
+            {/* Pass the grandTotal AND the new isCartEmpty prop to the Orderbutton */}
+            <Orderbutton totalPrice={grandTotal.toFixed(0)} isCartEmpty={isCartEmpty} />
         </SafeAreaView>
     );
 };
@@ -323,7 +326,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#EBF5FB',
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 10,
     },
     billGstinMainText: {
         fontSize: 16,

@@ -3,8 +3,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 
-// Accept totalPrice as a prop
-const Orderbutton = ({ totalPrice }) => {
+// Accept totalPrice and the new isCartEmpty prop
+const Orderbutton = ({ totalPrice, isCartEmpty }) => {
   return (
     <TouchableOpacity onPress={() => console.log('Order placed')} activeOpacity={0.9}>
       <LinearGradient
@@ -13,8 +13,10 @@ const Orderbutton = ({ totalPrice }) => {
         end={{ x: 1, y: 0 }}
         style={styles.buttonContainer}
       >
-        {/* Display the dynamically passed totalPrice */}
-        <Text style={styles.buttonText}>Total ₹{totalPrice} | Place Order</Text>
+        {/* Conditionally display the text based on isCartEmpty */}
+        <Text style={styles.buttonText}>
+          {isCartEmpty ? "Place Order" : `Total ₹${totalPrice} | Place Order`}
+        </Text>
       </LinearGradient>
     </TouchableOpacity>
   );
