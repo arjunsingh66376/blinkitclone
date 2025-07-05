@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "845761372508",
+    "project_id": "comexamplefoodapp-1af0a",
+    "storage_bucket": "comexamplefoodapp-1af0a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845761372508:android:e67e16dcb82449d57aa199",
+        "android_client_info": {
+          "package_name": "com.foodapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAi1rMLod2y_qOU3cdnJz-I_ULvD58VR4U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
