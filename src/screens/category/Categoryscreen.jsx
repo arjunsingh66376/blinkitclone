@@ -1,8 +1,13 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import Appbar from '../../component/Appbar'
-import { GroceryCard } from '../../component/Cards'
-// other imports
+// src/screens/Categoryscreen.js
+import { SafeAreaView, StyleSheet, Text, View,TouchableOpacity } from 'react-native';
+import React from 'react';
+import Appbar from '../../component/Appbar'; // Import Appbar
+import { GroceryCard } from '../../component/Cards';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native'; // <--- NEW: Import useNavigation
+import { ALL_PRODUCTS } from '../../data/Product'; // <--- NEW: Import ALL_PRODUCTS for potential future use
+
+// other imports (images are now handled by ALL_PRODUCTS, but keep if still used directly)
 import img200 from '../../../assets/images/img200.png';
 import img210 from '../../../assets/images/img210.png';
 import img220 from '../../../assets/images/img220.png';
@@ -32,136 +37,128 @@ import img530 from '../../../assets/images/img530.png';
 import img540 from '../../../assets/images/img540.png';
 import img550 from '../../../assets/images/img550.png';
 import img560 from '../../../assets/images/img560.png';
-import { ScrollView } from 'react-native-gesture-handler';
-
-
 
 
 const Categoryscreen = () => {
+  const navigation = useNavigation(); // <--- NEW: Get navigation object
+
+  // <--- NEW: Function to handle search submission from Appbar
+  const handleSearchSubmit = (query) => {
+    navigation.navigate('Search', { searchQuery: query });
+  };
+
   return (
-    <SafeAreaView style={{flex:1}}>
-<Appbar bgcolor={"#F7CB45"} color={"black"} circlebgcolor={"white"} />
+    <SafeAreaView style={{ flex: 1 }}>
+      {/* <--- Pass the new onSearchSubmit prop to Appbar */}
+      <Appbar bgcolor={"#F7CB45"} color={"black"} circlebgcolor={"white"} onSearchSubmit={handleSearchSubmit} />
       <View style={styles.bgcover}>
         <ScrollView showsVerticalScrollIndicator={false}>
-        {/* grocery heading  */}
-        <Text style={styles.grocerytext}>Grocery & Kitchen</Text>
+          {/* grocery heading */}
+          <Text style={styles.grocerytext}>Grocery & Kitchen</Text>
 
-        {/* grocery first  row */}
-      <View style={styles.groceryfirstrow}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <GroceryCard imageSource={img200} title='Vegetables & Fruits'/>
-          <GroceryCard imageSource={img210} title='Atta, Dal & Rice'/>
-          <GroceryCard imageSource={img220} title='Oil, Ghee & Masala '/>
-          <GroceryCard imageSource={img230} title='Dairy, Bread & Milk '/>
-          <GroceryCard imageSource={img240} title='Cucumbers '/>
-          <GroceryCard imageSource={img250} title=' Apples'/>
-          <GroceryCard imageSource={img260} title='Chocolates '/>
-          <GroceryCard imageSource={img270} title=' Kurkure'/> 
+          {/* grocery first row */}
+          <View style={styles.groceryfirstrow}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {/* You might want to map from ALL_PRODUCTS here for consistency */}
+              <GroceryCard imageSource={img200} title='Vegetables & Fruits' />
+              <GroceryCard imageSource={img210} title='Atta, Dal & Rice' />
+              <GroceryCard imageSource={img220} title='Oil, Ghee & Masala ' />
+              <GroceryCard imageSource={img230} title='Dairy, Bread & Milk ' />
+              <GroceryCard imageSource={img240} title='Cucumbers ' />
+              <GroceryCard imageSource={img250} title=' Apples' />
+              <GroceryCard imageSource={img260} title='Chocolates ' />
+              <GroceryCard imageSource={img270} title=' Kurkure' />
+            </ScrollView>
+          </View>
+
+          {/* grocery second row */}
+          <View style={styles.grocerysecondrow}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <GroceryCard imageSource={img300} title='Dry Fruits & Cereals' />
+              <GroceryCard imageSource={img310} title='Kitchen & Appliances' />
+              <GroceryCard imageSource={img320} title='Tea & Coffees ' />
+              <GroceryCard imageSource={img330} title='Ice Creams & much more ' />
+              <GroceryCard imageSource={img340} title='Noodles & Packet Food ' />
+              <GroceryCard imageSource={img350} title=' Apples' />
+              <GroceryCard imageSource={img360} title='Chocolates ' />
+            </ScrollView>
+
+          </View>
+
+          {/* next category */}
+          <Text style={styles.snacks}>Snacks & Drinks</Text>
+          {/* snacks  first row  */}
+          <View style={styles.snackfirstrow}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <GroceryCard imageSource={img400} title='Kitchen & Appliances' />
+              <GroceryCard imageSource={img410} title='Tea & Coffees ' />
+              <GroceryCard imageSource={img420} title='Ice Creams & much more ' />
+              <GroceryCard imageSource={img430} title='Noodles & Packet Food ' />
+              <GroceryCard imageSource={img440} title=' Apples' />
+              <GroceryCard imageSource={img450} title='Chocolates ' />
+              <GroceryCard imageSource={img460} title=' Kurkure' />
+            </ScrollView>
+          </View>
+
+          {/* another  category */}
+          <Text style={styles.household}>Household Essentials</Text>
+          <View style={styles.householdfirstrow}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <GroceryCard imageSource={img500} title='Dry Fruits & Cereals' />
+              <GroceryCard imageSource={img510} title='Kitchen & Appliances' />
+              <GroceryCard imageSource={img520} title='Tea & Coffees ' />
+              <GroceryCard imageSource={img530} title='Ice Creams & much more ' />
+              <GroceryCard imageSource={img540} title='Noodles & Packet Food ' />
+              <GroceryCard imageSource={img550} title=' Apples' />
+              <GroceryCard imageSource={img560} title='Chocolates ' />
+            </ScrollView>
+          </View>
+
         </ScrollView>
-        </View>
-
-        {/* grocery second row */}
-        <View style={styles.grocerysecondrow}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <GroceryCard imageSource={img300} title='Dry Fruits & Cereals'/>
-          <GroceryCard imageSource={img310} title='Kitchen & Appliances'/>
-          <GroceryCard imageSource={img320} title='Tea & Coffees '/>
-          <GroceryCard imageSource={img330} title='Ice Creams & much more '/>
-          <GroceryCard imageSource={img340} title='Noodles & Packet Food '/>
-          <GroceryCard imageSource={img350} title=' Apples'/>
-          <GroceryCard imageSource={img360} title='Chocolates '/>
-          </ScrollView>
-
-        </View>
-
-                {/* next category */}
-        <Text style={styles.snacks}>Snacks & Drinks</Text>
-        {/* snacks  first row  */}
-        <View style={styles.snackfirstrow}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <GroceryCard imageSource={img400} title='Kitchen & Appliances'/>
-          <GroceryCard imageSource={img410} title='Tea & Coffees '/>
-          <GroceryCard imageSource={img420} title='Ice Creams & much more '/>
-          <GroceryCard imageSource={img430} title='Noodles & Packet Food '/>
-          <GroceryCard imageSource={img440} title=' Apples'/>
-          <GroceryCard imageSource={img450} title='Chocolates '/>
-          <GroceryCard imageSource={img460} title=' Kurkure'/> 
-        </ScrollView>
-        </View>
-
-        {/* another  category */}
-        <Text style={styles.household}>Household Essentials</Text>
-        <View style={styles.householdfirstrow}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <GroceryCard imageSource={img500} title='Dry Fruits & Cereals'/>
-          <GroceryCard imageSource={img510} title='Kitchen & Appliances'/>
-          <GroceryCard imageSource={img520} title='Tea & Coffees '/>
-          <GroceryCard imageSource={img530} title='Ice Creams & much more '/>
-          <GroceryCard imageSource={img540} title='Noodles & Packet Food '/>
-          <GroceryCard imageSource={img550} title=' Apples'/>
-          <GroceryCard imageSource={img560} title='Chocolates '/>
-          </ScrollView>
-        </View>
-
-        </ScrollView>
-
-
-
-
-
-
-
-
-
-
-
-
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Categoryscreen
+export default Categoryscreen;
 
 const styles = StyleSheet.create({
-  bgcover:{
-    flex:1,
-    backgroundColor:"white",
-    paddingVertical:20,
-    paddingHorizontal:20
+  bgcover: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingVertical: 20,
+    paddingHorizontal: 20
   },
-  grocerytext:{
-    fontSize:15,
-    fontWeight:"bold",
-    marginBottom:15
+  grocerytext: {
+    fontSize: 15,
+    fontWeight: "bold",
+    marginBottom: 15
   },
-  groceryfirstrow:{
-   height:"auto",
-   width:"100%",
-    marginBottom:10,
-    display:'flex',
-    flexDirection:'row'
+  groceryfirstrow: {
+    height: "auto",
+    width: "100%",
+    marginBottom: 10,
+    display: 'flex',
+    flexDirection: 'row'
   },
-  grocerysecondrow:{
-    height:"auto",
-   width:"100%",
-    marginBottom:15
-
+  grocerysecondrow: {
+    height: "auto",
+    width: "100%",
+    marginBottom: 15
   },
-  snacks:{
-    fontSize:14,
-    fontWeight:"bold",
-    marginBottom:15
+  snacks: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 15
   },
-  snackfirstrow:{
-    height:"auto",
-   width:"100%",
-    marginBottom:15
+  snackfirstrow: {
+    height: "auto",
+    width: "100%",
+    marginBottom: 15
   },
-  household:{
-    fontSize:14,
-    fontWeight:"bold",
-    marginBottom:15
+  household: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 15
   },
-  
-})
+});

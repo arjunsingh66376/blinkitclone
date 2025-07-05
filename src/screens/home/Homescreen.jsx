@@ -3,6 +3,7 @@ import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity } from 'r
 import React from 'react';
 import Appbar from '../../component/Appbar';
 import Cards, { CategoryCard, GroceryCard, ItemCard } from '../../component/Cards';
+// Import all images from data/products.js instead of individual imports if they are now centralized
 import img110 from '../../../assets/images/img110.png';
 import img120 from '../../../assets/images/img120.png';
 import img130 from '../../../assets/images/img130.png';
@@ -19,12 +20,15 @@ import img250 from '../../../assets/images/img250.png';
 import img260 from '../../../assets/images/img260.png';
 import img270 from '../../../assets/images/img270.png';
 
+
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { useCart } from '../../context/Cartcontext';
-
-// <--- NEW: Import Toast
 import Toast from 'react-native-toast-message';
+
+// <--- NEW: Import ALL_PRODUCTS for direct use or reference if needed
+import { ALL_PRODUCTS } from '../data/products';
+
 
 const Homescreen = () => {
   const navigation = useNavigation();
@@ -33,21 +37,19 @@ const Homescreen = () => {
   const handleAddItem = (item) => {
     addToCart(item);
     console.log('Item added to cart:', item.title);
-    // <--- NEW: Show toast notification for ItemCard adds
     Toast.show({
-      type: 'success', // or 'info', 'error'
+      type: 'success',
       text1: 'Item Added to Cart!',
       text2: `${item.title} has been added.`,
-      visibilityTime: 2000, // 2 seconds
+      visibilityTime: 2000,
       autoHide: true,
-      topOffset: 30, // Adjust position as needed
+      topOffset: 30,
     });
   };
 
   const handleGroceryCardPress = (item) => {
     addToCart(item);
     console.log('Grocery item added to cart:', item.title);
-    // <--- NEW: Show toast notification for GroceryCard taps
     Toast.show({
       type: 'success',
       text1: 'Grocery Added to Cart!',
@@ -58,10 +60,16 @@ const Homescreen = () => {
     });
   };
 
+  // <--- NEW: Function to handle search submission from Appbar
+  const handleSearchSubmit = (query) => {
+    navigation.navigate('Search', { searchQuery: query });
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       {/* app bar custom component */}
-      <Appbar bgcolor={"#EC0505"} color={"white"} circlebgcolor={"white"} />
+      {/* <--- Pass the new onSearchSubmit prop */}
+      <Appbar bgcolor={"#EC0505"} color={"white"} circlebgcolor={"white"} onSearchSubmit={handleSearchSubmit} />
 
       {/* offer banner */}
       <View style={styles.offerbg}>
@@ -105,13 +113,15 @@ const Homescreen = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.Itemcardwrapper}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <ItemCard title="Golden Glass Wooden Lid Candle (Oudh)" deliveryTime="16 Mins" price="₹ 79" productImage={img110} onAddPress={() => handleAddItem({ title: "Golden Glass Wooden Lid Candle (Oudh)", deliveryTime: "16 Mins", price: "79", productImage: img110 })} />
-              <ItemCard title="Royal Gulab Jamun By Bikano" deliveryTime="10 Mins" price="₹ 49" productImage={img120} onAddPress={() => handleAddItem({ title: "Royal Gulab Jamun By Bikano", deliveryTime: "10 Mins", price: "49", productImage: img120 })} />
-              <ItemCard title="Bikaji Bhujia" deliveryTime="30 Mins" price="₹ 119" productImage={img130} onAddPress={() => handleAddItem({ title: "Bikaji Bhujia", deliveryTime: "30 Mins", price: "119", productImage: img130 })} />
-              <ItemCard title="Millineans" deliveryTime="2 Mins" price="₹ 10" productImage={img140} onAddPress={() => handleAddItem({ title: "Millineans", deliveryTime: "2 Mins", price: "10", productImage: img140 })} />
-              <ItemCard title="Montex Pens" deliveryTime="7 Mins" price="₹ 200" productImage={img150} onAddPress={() => handleAddItem({ title: "Montex Pens", deliveryTime: "7 Mins", price: "200", productImage: img150 })} />
-              <ItemCard title="Bansiram Gulab Jamun" deliveryTime="30 Mins" price="₹ 32" productImage={img160} onAddPress={() => handleAddItem({ title: "Bansiram Gulab Jamun", deliveryTime: "30 Mins", price: "32", productImage: img160 })} />
-              <ItemCard title="Durex Condem" deliveryTime="15 Mins" price="₹ 450" productImage={img270} onAddPress={() => handleAddItem({ title: "Durex Condem", deliveryTime: "15 Mins", price: "450", productImage: img270 })} />
+              {/* Use ALL_PRODUCTS for consistency, or keep as is if these are hardcoded examples */}
+              {/* For now, keeping your existing hardcoded data structure here, but ideally it would map from ALL_PRODUCTS */}
+              <ItemCard title="Golden Glass Wooden Lid Candle (Oudh)" deliveryTime="16 Mins" price="₹ 79" productImage={img110} onAddPress={() => handleAddItem({ id: 'item1', title: "Golden Glass Wooden Lid Candle (Oudh)", deliveryTime: "16 Mins", price: "79", productImage: img110 })} />
+              <ItemCard title="Royal Gulab Jamun By Bikano" deliveryTime="10 Mins" price="₹ 49" productImage={img120} onAddPress={() => handleAddItem({ id: 'item2', title: "Royal Gulab Jamun By Bikano", deliveryTime: "10 Mins", price: "49", productImage: img120 })} />
+              <ItemCard title="Bikaji Bhujia" deliveryTime="30 Mins" price="₹ 119" productImage={img130} onAddPress={() => handleAddItem({ id: 'item3', title: "Bikaji Bhujia", deliveryTime: "30 Mins", price: "119", productImage: img130 })} />
+              <ItemCard title="Millineans" deliveryTime="2 Mins" price="₹ 10" productImage={img140} onAddPress={() => handleAddItem({ id: 'item4', title: "Millineans", deliveryTime: "2 Mins", price: "10", productImage: img140 })} />
+              <ItemCard title="Montex Pens" deliveryTime="7 Mins" price="₹ 200" productImage={img150} onAddPress={() => handleAddItem({ id: 'item5', title: "Montex Pens", deliveryTime: "7 Mins", price: "200", productImage: img150 })} />
+              <ItemCard title="Bansiram Gulab Jamun" deliveryTime="30 Mins" price="₹ 32" productImage={img160} onAddPress={() => handleAddItem({ id: 'item6', title: "Bansiram Gulab Jamun", deliveryTime: "30 Mins", price: "32", productImage: img160 })} />
+              <ItemCard title="Durex Condem" deliveryTime="15 Mins" price="₹ 450" productImage={img270} onAddPress={() => handleAddItem({ id: 'item7', title: "Durex Condem", deliveryTime: "15 Mins", price: "450", productImage: img270 })} />
             </ScrollView>
           </View>
 
@@ -121,28 +131,28 @@ const Homescreen = () => {
           <View style={styles.grocerywrapper}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {/* Add an onPress to GroceryCard */}
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Vegetables & Fruits', imageSource: img200, price: '0', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery1', title: 'Vegetables & Fruits', imageSource: img200, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img200} title='Vegetables & Fruits' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Atta, Dal & Rice', imageSource: img210, price: '0', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery2', title: 'Atta, Dal & Rice', imageSource: img210, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img210} title='Atta, Dal & Rice' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Oil, Ghee & Masala', imageSource: img220, price: '0', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery3', title: 'Oil, Ghee & Masala', imageSource: img220, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img220} title='Oil, Ghee & Masala' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Dairy, Bread & Milk', imageSource: img230, price: '0', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery4', title: 'Dairy, Bread & Milk', imageSource: img230, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img230} title='Dairy, Bread & Milk' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Cucumbers', imageSource: img240, price: '0', weight: '1 kg' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery5', title: 'Cucumbers', imageSource: img240, price: '0', weight: '1 kg' })}>
                 <GroceryCard imageSource={img240} title='Cucumbers' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Apples', imageSource: img250, price: '0', weight: '1 kg' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery6', title: 'Apples', imageSource: img250, price: '0', weight: '1 kg' })}>
                 <GroceryCard imageSource={img250} title='Apples' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Chocolates', imageSource: img260, price: '0', weight: 'Various' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery7', title: 'Chocolates', imageSource: img260, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img260} title='Chocolates' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ title: 'Kurkure', imageSource: img170, price: '0', weight: '1 pack' })}>
+              <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery8', title: 'Kurkure', imageSource: img170, price: '0', weight: '1 pack' })}>
                 <GroceryCard imageSource={img170} title='Kurkure' />
               </TouchableOpacity>
             </ScrollView>
