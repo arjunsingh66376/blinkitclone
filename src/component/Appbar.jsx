@@ -3,14 +3,15 @@ import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { TextInput } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native'; // Keep useNavigation
+// Removed useNavigation as it's no longer needed for the user circle tap
+// import { useNavigation } from '@react-navigation/native'; // <--- REMOVED
 
 // Add onSearchSubmit prop
 const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
   const [query, setQuery] = useState('');
-  const navigation = useNavigation(); // Get navigation object
+  // const navigation = useNavigation(); // <--- REMOVED
 
-  // <--- NEW: State for Address Management
+  // State for Address Management
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [currentAddress, setCurrentAddress] = useState("Arjun Singh, Ratanada, Jodhpur (Raj)");
   const [tempAddress, setTempAddress] = useState(currentAddress); // Temporary state for modal input
@@ -27,7 +28,7 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
     }
   };
 
-  // <--- NEW: Address Modal Handlers
+  // Address Modal Handlers
   const handleOpenAddressModal = () => {
     setTempAddress(currentAddress); // Set temp address to current before opening
     setShowAddressModal(true);
@@ -42,10 +43,7 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
     setShowAddressModal(false); // Just close the modal without saving
   };
 
-  // <--- NEW: Function to open the drawer
-  const handleOpenDrawer = () => {
-    navigation.openDrawer();
-  };
+  // Removed handleOpenDrawer function
 
   return (
     // app bar bg
@@ -55,12 +53,12 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
       <View style={styles.txt2wrapper}>
         <Text style={[styles.txt2, { color: color }]}>16 minutes</Text>
 
-        {/* user image - NEW: Make it TouchableOpacity to open drawer */}
-        <TouchableOpacity onPress={handleOpenDrawer} style={[styles.circle, { backgroundColor: circlebgcolor }]}>
+        {/* user image - Reverted to a simple View, no longer TouchableOpacity */}
+        <View style={[styles.circle, { backgroundColor: circlebgcolor }]}> {/* <--- REVERTED */}
           <Image source={require('../../assets/images/user_black.png')} style={styles.userimg} />
-        </TouchableOpacity>
+        </View>
       </View>
-      {/* <--- NEW: TouchableOpacity for address dropdown */}
+      {/* TouchableOpacity for address dropdown */}
       <TouchableOpacity onPress={handleOpenAddressModal} style={styles.txt3wrapper}>
         <Text style={[styles.txt3, { color: color }]}> HOME -</Text>
         <Text style={[styles.txt4, { color: color }]}> {currentAddress}</Text> {/* Use state variable */}
@@ -86,7 +84,7 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
         </TouchableOpacity>
       </View>
 
-      {/* <--- NEW: Address Edit Modal */}
+      {/* Address Edit Modal */}
       <Modal
         animationType="slide" // or "fade" or "none"
         transparent={true}
@@ -133,6 +131,9 @@ export default Appbar;
 // =========================================================================================
 // app bar for checkout (no changes needed here, just for completeness)
 export const CheckoutAppbar = ({ onBackPress, onSharePress }) => {
+  // useNavigation is still needed here if onBackPress and onSharePress lead to navigation actions
+  // For simplicity, assuming onBackPress is handled by navigation.goBack() in parent screen
+  // If CheckoutAppbar itself needs navigation, you'd add useNavigation here.
   return (
     <View style={styles.appbarContainer}>
       {/* Back Arrow */}
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
 
-  // <--- NEW: Modal Specific Styles
+  // Modal Specific Styles (unchanged from previous versions)
   centeredView: {
     flex: 1,
     justifyContent: 'center',
