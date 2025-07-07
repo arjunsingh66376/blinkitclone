@@ -3,19 +3,20 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 
-// Accept totalPrice and the new isCartEmpty prop
-const Orderbutton = ({ totalPrice, isCartEmpty }) => {
+// Accept totalPrice, isCartEmpty, and the new 'onPress' prop
+const Orderbutton = ({ totalPrice, isCartEmpty, onPress }) => { // <--- NEW: Add onPress to props
   return (
-    <TouchableOpacity onPress={() => console.log('Order placed')} activeOpacity={0.9}>
+    // Use the 'onPress' prop passed from the parent component
+    <TouchableOpacity onPress={onPress} activeOpacity={0.9} disabled={isCartEmpty}> {/* <--- NEW: Use onPress prop, add disabled */}
       <LinearGradient
         colors={['#1FAA59', '#38B000']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={styles.buttonContainer}
+        style={[styles.buttonContainer, isCartEmpty && styles.disabledButton]} // Apply disabled style
       >
         {/* Conditionally display the text based on isCartEmpty */}
         <Text style={styles.buttonText}>
-          {isCartEmpty ? "Place Order" : `Total ₹${totalPrice} | Place Order`}
+          {isCartEmpty ? "Add items to cart" : `Total ₹${totalPrice} | Place Order`} {/* <--- NEW: Change text for empty cart */}
         </Text>
       </LinearGradient>
     </TouchableOpacity>
@@ -37,6 +38,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+  },
+  disabledButton: {
+    backgroundColor: '#cccccc', // Grey out button when disabled
+    shadowColor: '#999999',
   },
   buttonText: {
     color: '#fff',

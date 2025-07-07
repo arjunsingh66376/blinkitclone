@@ -1,15 +1,14 @@
-// src/component/Appbar.js (MODIFIED)
-import { StyleSheet, Text, View, Image, TouchableOpacity, Modal, TextInput as RNTextInput, Pressable } from 'react-native'; // <--- NEW: Import Modal, RNTextInput, Pressable
+import { StyleSheet, Text, View, Image, TouchableOpacity, Modal, TextInput as RNTextInput, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { TextInput } from 'react-native-gesture-handler'; // Ensure TextInput is imported from here
-import { useNavigation } from '@react-navigation/native';
+import { TextInput } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native'; // Keep useNavigation
 
 // Add onSearchSubmit prop
 const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
   const [query, setQuery] = useState('');
-  const navigation = useNavigation();
+  const navigation = useNavigation(); // Get navigation object
 
   // <--- NEW: State for Address Management
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -43,6 +42,11 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
     setShowAddressModal(false); // Just close the modal without saving
   };
 
+  // <--- NEW: Function to open the drawer
+  const handleOpenDrawer = () => {
+    navigation.openDrawer();
+  };
+
   return (
     // app bar bg
     <View style={[styles.bg, { backgroundColor: bgcolor }]}>
@@ -51,10 +55,10 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
       <View style={styles.txt2wrapper}>
         <Text style={[styles.txt2, { color: color }]}>16 minutes</Text>
 
-        {/* user image */}
-        <View style={[styles.circle, { backgroundColor: circlebgcolor }]}>
+        {/* user image - NEW: Make it TouchableOpacity to open drawer */}
+        <TouchableOpacity onPress={handleOpenDrawer} style={[styles.circle, { backgroundColor: circlebgcolor }]}>
           <Image source={require('../../assets/images/user_black.png')} style={styles.userimg} />
-        </View>
+        </TouchableOpacity>
       </View>
       {/* <--- NEW: TouchableOpacity for address dropdown */}
       <TouchableOpacity onPress={handleOpenAddressModal} style={styles.txt3wrapper}>
@@ -200,7 +204,7 @@ const styles = StyleSheet.create({
     // No fixed right margin needed here, flex will handle it
     marginTop: 4,
     flexShrink: 1, // Allow text to shrink if it's too long
-    marginRight:10
+    marginRight: 10
   },
   searchbar: {
     width: '100%',

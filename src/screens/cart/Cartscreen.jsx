@@ -1,24 +1,23 @@
-// src/screens/Cartscreen.js
-import { SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, TextInput, ActivityIndicator, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Checkoutitemcard, DonationCard, GiftBanner } from '../../component/Cards';
-import { CheckoutAppbar } from '../../component/Appbar'; // Correct import path
+import { CheckoutAppbar } from '../../component/Appbar';
 import Orderbutton from '../../component/Orderbutton';
 import { useCart } from '../../context/Cartcontext';
-
-// <--- NEW: Import useNavigation
 import { useNavigation } from '@react-navigation/native';
-
 import Toast from 'react-native-toast-message';
+import RazorpayCheckout from 'react-native-razorpay'; // NEW: Import RazorpayCheckout
 
 const Cartscreen = () => {
-    const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
-    // <--- NEW: Get navigation object
+    const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart, clearCart } = useCart();
     const navigation = useNavigation();
 
     const [isGiftSelected, setIsGiftSelected] = useState(false);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [paymentProcessing, setPaymentProcessing] = useState(false);
+    const [paymentError, setPaymentError] = useState('');
 
     const calculateTotals = () => {
         let itemsTotal = 0;
@@ -29,7 +28,7 @@ const Cartscreen = () => {
             const originalUnitPriceNum = parseFloat(item.originalUnitPrice || 0);
             const quantity = item.quantity || 1;
 
-            itemsTotal += priceNum;
+            itemsTotal += priceNum * quantity;
             totalOriginalPriceSum += (originalUnitPriceNum * quantity);
         });
 
@@ -88,14 +87,111 @@ const Cartscreen = () => {
         console.log('Gift selected state:', newState);
     };
 
-    // <--- NEW: Handler for the back button
     const handleBackPress = () => {
-        navigation.goBack(); // This navigates to the previous screen in the stack
+        navigation.goBack();
     };
+
+    // Function to handle payment initiation (opens modal)
+    const handleProceedToPayment = () => {
+        if (isCartEmpty) {
+            Toast.show({
+                type: 'error',
+                text1: 'Cart is Empty!',
+                text2: 'Please add items to your cart before proceeding to payment.',
+                visibilityTime: 3000,
+                autoHide: true,
+                topOffset: 30,
+            });
+            return;
+        }
+        // Check if grandTotal is greater than 0
+        if (grandTotal <= 0) {
+            Toast.show({
+                type: 'error',
+                text1: 'Invalid Amount!',
+                text2: 'Total amount must be greater than zero to proceed with payment.',
+                visibilityTime: 3000,
+                autoHide: true,
+                topOffset: 30,
+            });
+            return;
+        }
+        setShowPaymentModal(true);
+        setPaymentError(''); // Reset error
+    };
+
+    // Function to initiate Razorpay payment
+    const initiateRazorpayPayment = async () => {
+        setPaymentProcessing(true);
+        setPaymentError('');
+
+        // For demo purposes, we are omitting 'order_id'.
+        // In a real production app, 'order_id' should always be generated securely on your backend.
+        const options = {
+            description: 'Payment for your Blinkit order',
+            image: require('../../../assets/images/splashimage.png'), // Public placeholder image
+            currency: 'INR',
+            key: 'rzp_test_Q1l5veFa2pHJFF', // <--- REPLACE THIS with your actual Razorpay Test Key ID
+            amount: grandTotal.toFixed(0) * 100, // Amount in smallest currency unit (paise for INR)
+            name: 'Blinkit Clone',
+            // order_id: 'order_YOUR_ORDER_ID', // <--- REMOVED: Omit order_id for direct payment initiation
+            prefill: {
+                email: 'customer@example.com', // Replace with actual user email for demo
+                contact: '9999999999', // Replace with actual user contact for demo
+                name: 'Blinkit User' // Replace with actual user name for demo
+            },
+            theme: { color: '#F7CB45' } // Your app's primary color
+        };
+
+        try {
+            const data = await RazorpayCheckout.open(options);
+            // Payment successful, data contains razorpay_payment_id, razorpay_order_id, razorpay_signature
+            console.log('Razorpay Payment successful:', data);
+            Toast.show({
+                type: 'success',
+                text1: 'Payment Successful!',
+                text2: `Payment ID: ${data.razorpay_payment_id}. Order Confirmed!`,
+                visibilityTime: 4000,
+                autoHide: true,
+                topOffset: 30,
+            });
+            clearCart(); // Clear cart on successful payment
+            // For a real app, you would send data.razorpay_payment_id, data.razorpay_order_id,
+            // and data.razorpay_signature to your backend for final verification.
+            setTimeout(() => {
+                setShowPaymentModal(false);
+                // Optionally navigate to an order confirmation screen
+                // navigation.navigate('OrderConfirmation', { orderId: data.razorpay_order_id });
+            }, 1000);
+        } catch (error) {
+            // Payment failed or cancelled
+            console.error('Razorpay Payment failed:', error);
+            let errorMessage = 'Payment was cancelled or failed.';
+            if (error.code === RazorpayCheckout.ErrorCode.VALIDATION_ERROR) {
+                errorMessage = `Validation Error: ${error.description}`;
+            } else if (error.code === RazorpayCheckout.ErrorCode.NETWORK_ERROR) {
+                errorMessage = `Network Error: ${error.description}`;
+            } else if (error.description) {
+                errorMessage = error.description;
+            }
+
+            setPaymentError(errorMessage);
+            Toast.show({
+                type: 'error',
+                text1: 'Payment Failed!',
+                text2: errorMessage,
+                visibilityTime: 4000,
+                autoHide: true,
+                topOffset: 30,
+            });
+        } finally {
+            setPaymentProcessing(false);
+        }
+    };
+
 
     return (
         <SafeAreaView style={{ flex: 1, padding: 10, backgroundColor: 'white' }}>
-            {/* Pass the handleBackPress function to onBackPress prop */}
             <CheckoutAppbar onBackPress={handleBackPress} />
 
             <View style={styles.checkoutheadingwrapper}>
@@ -205,7 +301,51 @@ const Cartscreen = () => {
                 </View>
                 <DonationCard />
             </ScrollView>
-            <Orderbutton totalPrice={grandTotal.toFixed(0)} isCartEmpty={isCartEmpty} />
+            <Orderbutton
+                totalPrice={grandTotal.toFixed(0)}
+                isCartEmpty={isCartEmpty}
+                onPress={handleProceedToPayment} // This now opens the payment modal
+            />
+
+            {/* Payment Modal for Razorpay */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showPaymentModal}
+                onRequestClose={() => setShowPaymentModal(false)}
+            >
+                <Pressable style={styles.paymentCenteredView} onPress={() => setShowPaymentModal(false)}>
+                    <View style={styles.paymentModalView} onStartShouldSetResponder={() => true}>
+                        <Text style={styles.paymentModalTitle}>Proceed to Payment</Text>
+                        <Text style={styles.paymentModalAmount}>Total Amount: ₹{grandTotal.toFixed(0)}</Text>
+
+                        {paymentProcessing ? (
+                            <View style={styles.loadingContainer}>
+                                <ActivityIndicator size="large" color="#EC0505" />
+                                <Text style={styles.loadingText}>Opening Razorpay Checkout...</Text>
+                            </View>
+                        ) : (
+                            <>
+                                {paymentError ? <Text style={styles.errorText}>{paymentError}</Text> : null}
+                                <TouchableOpacity
+                                    style={styles.payButton}
+                                    onPress={initiateRazorpayPayment} // Call Razorpay SDK here
+                                    disabled={paymentProcessing}
+                                >
+                                    <Text style={styles.payButtonText}>Pay with Razorpay</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.cancelButton}
+                                    onPress={() => setShowPaymentModal(false)}
+                                >
+                                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    </View>
+                </Pressable>
+            </Modal>
+            <Toast />
         </SafeAreaView>
     );
 };
@@ -384,5 +524,76 @@ const styles = StyleSheet.create({
     billGstinSubText: {
         fontSize: 12,
         color: '#666',
+    },
+    // Payment Modal Styles
+    paymentCenteredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    },
+    paymentModalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 15,
+        padding: 25,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 10,
+        width: '90%',
+        maxWidth: 400,
+    },
+    paymentModalTitle: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: '#333',
+    },
+    paymentModalAmount: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#38B000', // Changed color to green for amount
+        marginBottom: 20,
+    },
+    payButton: {
+        backgroundColor: '#EC0505', // Red color for Pay button
+        borderRadius: 10,
+        paddingVertical: 15,
+        width: '100%',
+        alignItems: 'center',
+        marginTop: 10,
+        elevation: 3,
+    },
+    payButtonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    cancelButton: {
+        marginTop: 10,
+        paddingVertical: 10,
+    },
+    cancelButtonText: {
+        color: '#666',
+        fontSize: 16,
+    },
+    loadingContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 30,
+    },
+    loadingText: {
+        marginTop: 15,
+        fontSize: 16,
+        color: '#555',
+    },
+    errorText: {
+        color: '#EC0505',
+        fontSize: 14,
+        marginBottom: 10,
+        textAlign: 'center',
     },
 });
