@@ -1,79 +1,87 @@
-import { SafeAreaView, StyleSheet, Text, View,TouchableOpacity,Image } from 'react-native'
-import React from 'react'
-import Appbar from '../../component/Appbar'
+import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
+import React, { useState } from 'react'; // useState is kept as it might be used for other purposes later
+import Appbar from '../../component/Appbar';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-
-
 const Printscreen = () => {
+  // State for selectedFileName is removed as it was tied to DocumentPicker
+  // If you need state for other purposes, you can add it here.
+
+  // Function to handle the file upload button click (now just a placeholder)
+  const handleUploadFiles = () => {
+    // This function no longer contains DocumentPicker logic.
+    // It will simply log a message or show an alert.
+    Alert.alert('Feature Not Available', 'File upload functionality is currently disabled.');
+    console.log('Upload Files button pressed. File picker functionality removed.');
+  };
+
   return (
-    <SafeAreaView style={{flex:1,}}>
-<Appbar bgcolor={"#F7CB45"} color={"black"} circlebgcolor={"white"} />
-<View style={styles.bg}>
-<Text style={styles.mainheading}>Print Store</Text>
-<Text style={styles.subheading}>Blinkit ensures secure prints at every stage</Text>
-<View style={styles.card}>
-<View style={styles.card}>
-      {/* Left content */}
-      <View style={styles.leftContent}>
-        <Text style={styles.title}>Documents</Text>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Appbar bgcolor={"#F7CB45"} color={"black"} circlebgcolor={"white"} />
+      <View style={styles.bg}>
+        <Text style={styles.mainheading}>Print Store</Text>
+        <Text style={styles.subheading}>Blinkit ensures secure prints at every stage</Text>
+        <View style={styles.card}>
+          <View style={styles.card}>
+            {/* Left content */}
+            <View style={styles.leftContent}>
+              <Text style={styles.title}>Documents</Text>
 
-        <View style={styles.bulletRow}>
-          <Entypo name="dot-single" size={18} color="#888" />
-          <Text style={styles.bulletText}>Price starting at rs 3/page</Text>
+              <View style={styles.bulletRow}>
+                <Entypo name="dot-single" size={18} color="#888" />
+                <Text style={styles.bulletText}>Price starting at rs 3/page</Text>
+              </View>
+
+              <View style={styles.bulletRow}>
+                <Entypo name="dot-single" size={18} color="#888" />
+                <Text style={styles.bulletText}>Paper quality: 70 GSM</Text>
+              </View>
+
+              <View style={styles.bulletRow}>
+                <Entypo name="dot-single" size={18} color="#888" />
+                <Text style={styles.bulletText}>Single side prints</Text>
+              </View>
+
+              {/* Upload Files Button */}
+              <TouchableOpacity style={styles.button} onPress={handleUploadFiles}>
+                <Text style={styles.buttonText}>Upload Files</Text>
+              </TouchableOpacity>
+
+              {/* Display selected file name is removed */}
+            </View>
+
+            {/* Right image */}
+            <Image
+              source={require('../../../assets/images/print.png')} // replace with your image path
+              style={styles.image}
+            />
+          </View>
         </View>
-
-        <View style={styles.bulletRow}>
-          <Entypo name="dot-single" size={18} color="#888" />
-          <Text style={styles.bulletText}>Paper quality: 70 GSM</Text>
-        </View>
-
-        <View style={styles.bulletRow}>
-          <Entypo name="dot-single" size={18} color="#888" />
-          <Text style={styles.bulletText}>Single side prints</Text>
-        </View>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Upload Files</Text>
-        </TouchableOpacity>
       </View>
-
-      {/* Right image */}
-      <Image
-        source={require('../../../assets/images/print.png')} // replace with your image path
-        style={styles.image}
-      />
-    </View>
-
-</View>
-
-</View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Printscreen
+export default Printscreen;
 
 const styles = StyleSheet.create({
-
-  bg:{
-    flex:1,
-    backgroundColor:'#f9ecee',
-    display:'flex',
-    alignItems:'center'
+  bg: {
+    flex: 1,
+    backgroundColor: '#f9ecee',
+    display: 'flex',
+    alignItems: 'center'
   },
-  mainheading:{
-    fontSize:32,
-    fontWeight:"bold",
-    alignSelf:'center',
-    marginTop:60
-
+  mainheading: {
+    fontSize: 32,
+    fontWeight: "bold",
+    alignSelf: 'center',
+    marginTop: 60
   },
-  subheading:{
-    fontSize:14,
-    fontWeight:'900',
-    alignSelf:'center',
-    color:'#9C9C9C'
+  subheading: {
+    fontSize: 14,
+    fontWeight: '900',
+    alignSelf: 'center',
+    color: '#9C9C9C'
   },
   card: {
     flexDirection: 'row',
@@ -122,4 +130,5 @@ const styles = StyleSheet.create({
     height: 60,
     resizeMode: 'contain',
   },
-})
+  // selectedFileText style is removed as it's no longer used
+});
