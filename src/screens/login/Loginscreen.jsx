@@ -3,12 +3,33 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
-// Firebase Imports
-// Using @react-native-firebase/auth as per your App.jsx
-import auth from '@react-native-firebase/auth';
+// Firebase Imports - Using modular SDK
+import { getAuth, onAuthStateChanged, signInWithPhoneNumber } from '@react-native-firebase/auth';
+import { initializeApp } from '@react-native-firebase/app'; // Import initializeApp if you initialize Firebase here
 
+// Assuming you have a Firebase config somewhere, e.g., in a separate file or passed as props
+// For demonstration, let's assume a dummy config if not already initialized globally.
+// In a real app, Firebase should be initialized once, likely in App.js or similar.
+// const firebaseConfig = {
+//   apiKey: "YOUR_API_KEY",
+//   authDomain: "YOUR_AUTH_DOMAIN",
+//   projectId: "YOUR_PROJECT_ID",
+//   storageBucket: "YOUR_STORAGE_BUCKET",
+//   messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+//   appId: "YOUR_APP_ID"
+// };
 
-const Loginscreen = ({ navigation,onDirectLoginSuccess }) => {
+// Initialize Firebase app if not already initialized globally (e.g., in App.js)
+// This part might be redundant if your main App.js already does this.
+// try {
+//   initializeApp(firebaseConfig);
+// } catch (e) {
+//   console.log("Firebase already initialized or config missing:", e);
+// }
+
+const Loginscreen = ({ navigation, onDirectLoginSuccess }) => {
+  // Get the auth instance
+  const auth = getAuth(); // Use getAuth() from modular SDK
 
   // State for modal visibility and input fields
   const [modalVisible, setModalVisible] = useState(false);
@@ -20,7 +41,8 @@ const Loginscreen = ({ navigation,onDirectLoginSuccess }) => {
 
   // Effect to check authentication status on component mount
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged((user) => {
+    // Use onAuthStateChanged from modular SDK
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log('User already logged in:', user.uid);
         onDirectLoginSuccess(); // ✅ Update local state, App will show Bottomtabnavigation
@@ -28,7 +50,7 @@ const Loginscreen = ({ navigation,onDirectLoginSuccess }) => {
     });
     return unsubscribe;
   }, []);
-  
+
 
   // Function to handle sending OTP
   const handleSendOtp = async () => {
@@ -41,8 +63,8 @@ const Loginscreen = ({ navigation,onDirectLoginSuccess }) => {
     const fullPhoneNumber = `+91${phoneNumber}`; // Prepend Indian country code
 
     try {
-      // signInWithPhoneNumber will trigger the native phone verification flow
-      const confirmation = await auth().signInWithPhoneNumber(fullPhoneNumber);
+      // Use signInWithPhoneNumber from modular SDK
+      const confirmation = await signInWithPhoneNumber(auth, fullPhoneNumber);
       setConfirmResult(confirmation); // Store the confirmation object
       setIsOtpSent(true); // Show OTP input field
       Alert.alert('OTP Sent', `OTP has been sent to ${fullPhoneNumber}`);
@@ -108,7 +130,7 @@ const Loginscreen = ({ navigation,onDirectLoginSuccess }) => {
           {/* NEW: Skip Login Button */}
           <TouchableOpacity
             style={styles.buttonSkipLogin}
-            onPress={() =>{  onDirectLoginSuccess();}} // Corrected to Bottomtabnavigation (singular)
+            onPress={() => { onDirectLoginSuccess(); }} // Corrected to Bottomtabnavigation (singular)
           >
             <Text style={styles.buttonSkipLoginText}>Skip Login</Text>
           </TouchableOpacity>

@@ -2,14 +2,9 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, Modal, TextInput as RN
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { TextInput } from 'react-native-gesture-handler';
-// Removed useNavigation as it's no longer needed for the user circle tap
-// import { useNavigation } from '@react-navigation/native'; // <--- REMOVED
 
-// Add onSearchSubmit prop
-const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
+const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit = () => {} }) => {
   const [query, setQuery] = useState('');
-  // const navigation = useNavigation(); // <--- REMOVED
 
   // State for Address Management
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -43,8 +38,6 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
     setShowAddressModal(false); // Just close the modal without saving
   };
 
-  // Removed handleOpenDrawer function
-
   return (
     // app bar bg
     <View style={[styles.bg, { backgroundColor: bgcolor }]}>
@@ -54,23 +47,23 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
         <Text style={[styles.txt2, { color: color }]}>16 minutes</Text>
 
         {/* user image - Reverted to a simple View, no longer TouchableOpacity */}
-        <View style={[styles.circle, { backgroundColor: circlebgcolor }]}> {/* <--- REVERTED */}
+        <View style={[styles.circle, { backgroundColor: circlebgcolor }]}>
           <Image source={require('../../assets/images/user_black.png')} style={styles.userimg} />
         </View>
       </View>
       {/* TouchableOpacity for address dropdown */}
       <TouchableOpacity onPress={handleOpenAddressModal} style={styles.txt3wrapper}>
-        <Text style={[styles.txt3, { color: color }]}> HOME -</Text>
-        <Text style={[styles.txt4, { color: color }]}> {currentAddress}</Text> {/* Use state variable */}
-        <Icon name="caret-down" size={20} color={color} /> {/* Added color prop to icon */}
+        <Text style={[styles.txt3, { color: color }]}>HOME -</Text>
+        <Text style={[styles.txt4, { color: color }]} numberOfLines={1} ellipsizeMode="tail">{currentAddress}</Text>
+        <Icon name="caret-down" size={20} color={color} />
       </TouchableOpacity>
 
       {/* search bar */}
       <View style={styles.searchbar}>
         <TouchableOpacity onPress={handleSearch}>
-          <Ionicons name="search" size={18} />
+          <Ionicons name="search" size={18} color={color} />
         </TouchableOpacity>
-        <TextInput
+        <RNTextInput
           style={styles.textinput}
           placeholder='Search For Items ...'
           placeholderTextColor="#9C9C9C"
@@ -80,22 +73,22 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
           returnKeyType="search"
         />
         <TouchableOpacity onPress={handlemic}>
-          <Icon name='microphone' size={18} />
+          <Icon name='microphone' size={18} color={color} />
         </TouchableOpacity>
       </View>
 
       {/* Address Edit Modal */}
       <Modal
-        animationType="slide" // or "fade" or "none"
+        animationType="slide"
         transparent={true}
         visible={showAddressModal}
-        onRequestClose={handleCancelAddressEdit} // For Android back button
+        onRequestClose={handleCancelAddressEdit}
       >
-        <Pressable style={styles.centeredView} onPress={handleCancelAddressEdit}> {/* Pressing outside closes modal */}
-          <View style={styles.modalView} onStartShouldSetResponder={() => true}> {/* Prevents modal from closing when interacting inside */}
+        <Pressable style={styles.centeredView} onPress={handleCancelAddressEdit}>
+          <View style={styles.modalView} onStartShouldSetResponder={() => true}>
             <Text style={styles.modalTitle}>Edit Delivery Address</Text>
             <Text style={styles.modalCurrentAddressLabel}>Current Address:</Text>
-            <RNTextInput // Using RNTextInput for the modal input
+            <RNTextInput
               style={styles.modalTextInput}
               onChangeText={setTempAddress}
               value={tempAddress}
@@ -104,6 +97,7 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
               placeholder="Enter new address"
               placeholderTextColor="#888"
             />
+            <Text style={styles.modalHintText}>All addresses are saved locally on your device.</Text>
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.buttonCancel]}
@@ -129,22 +123,16 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit }) => {
 export default Appbar;
 
 // =========================================================================================
-// app bar for checkout (no changes needed here, just for completeness)
+// app bar for checkout
 export const CheckoutAppbar = ({ onBackPress, onSharePress }) => {
-  // useNavigation is still needed here if onBackPress and onSharePress lead to navigation actions
-  // For simplicity, assuming onBackPress is handled by navigation.goBack() in parent screen
-  // If CheckoutAppbar itself needs navigation, you'd add useNavigation here.
   return (
     <View style={styles.appbarContainer}>
-      {/* Back Arrow */}
       <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
         <Ionicons name="arrow-back" size={32} color="#333" />
       </TouchableOpacity>
 
-      {/* Title */}
       <Text style={styles.checkouttitleText}>Checkout</Text>
 
-      {/* Share Button with Cart Icon */}
       <TouchableOpacity onPress={onSharePress} style={styles.shareButton}>
         <Ionicons name="cart-outline" size={24} color="#52B788" />
         <Text style={styles.shareText}>Share</Text>
@@ -192,19 +180,18 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     marginBottom: 15,
-    alignItems: 'center', // Align items vertically in the address row
+    alignItems: 'center',
   },
   txt3: {
     fontSize: 12,
     fontWeight: "bold",
     marginTop: 4,
-    marginRight: 5, // Spacing between "HOME -" and address
+    marginRight: 5,
   },
   txt4: {
     fontSize: 12,
-    // No fixed right margin needed here, flex will handle it
     marginTop: 4,
-    flexShrink: 1, // Allow text to shrink if it's too long
+    flexShrink: 1,
     marginRight: 10
   },
   searchbar: {
@@ -225,8 +212,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
   },
-  // ===========================================================================================
-  // checkout app bar styling (unchanged)
   appbarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -259,13 +244,11 @@ const styles = StyleSheet.create({
     color: '#52B788',
     marginLeft: 5,
   },
-
-  // Modal Specific Styles (unchanged from previous versions)
   centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dim background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
     margin: 20,
@@ -281,8 +264,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '80%', // Make modal a bit narrower
-    maxHeight: '60%', // Limit height for longer inputs
+    width: '80%',
+    maxHeight: '60%',
   },
   modalTitle: {
     fontSize: 20,
@@ -294,7 +277,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     marginBottom: 5,
-    alignSelf: 'flex-start', // Align label to the left
+    alignSelf: 'flex-start',
   },
   modalTextInput: {
     borderWidth: 1,
@@ -303,9 +286,15 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '100%',
     marginBottom: 20,
-    textAlignVertical: 'top', // For multiline input to start from top
+    textAlignVertical: 'top',
     fontSize: 16,
     color: '#333',
+  },
+  modalHintText: {
+    fontSize: 12,
+    color: '#999',
+    marginBottom: 15,
+    textAlign: 'center',
   },
   modalButtonContainer: {
     flexDirection: 'row',
@@ -316,20 +305,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     elevation: 2,
-    flex: 1, // Make buttons take equal space
-    marginHorizontal: 5, // Add space between buttons
+    flex: 1,
+    marginHorizontal: 5,
     alignItems: 'center',
   },
   buttonSave: {
-    backgroundColor: '#EC0505', // Red color for Save
+    backgroundColor: '#EC0505',
   },
   buttonCancel: {
-    backgroundColor: '#888', // Grey color for Cancel
+    backgroundColor: '#888',
   },
   textStyle: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: 16,
-  },
+  }
 });

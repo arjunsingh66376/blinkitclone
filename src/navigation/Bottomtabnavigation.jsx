@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, StyleSheet } from 'react-native';
-// Removed SafeAreaView import from here, as it's used inside screens now.
-// Removed useSafeAreaInsets import from here, as it's used inside screens now.
 
 // --- CORRECTED ICON IMPORTS ---
 // Import each icon set with a unique alias
 import IonIcons from 'react-native-vector-icons/Ionicons'; // Alias Ionicons as IonIcons
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; // Correct import for MaterialCommunityIcons
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; // Correct import for MaterialIcons
-
 
 
 // Import your custom screen components
@@ -21,38 +18,32 @@ import Printscreen from '../screens/print/Printscreen';
 const Tab = createBottomTabNavigator();
 
 const Bottomtabnavigation = () => {
-    
+
   return (
-    // --- REMOVED SafeAreaView WRAPPING THE ENTIRE NAVIGATOR ---
-    // The NavigationContainer (and thus the Tab.Navigator) should fill the screen.
-    // Safe area padding should be applied inside each individual screen component.
-    
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconComponent; // This will hold the specific icon component (e.g., <IonIcons /> or <MaterialCommunityIcons />)
-          let iconName;      // This will hold the string name of the icon
+          let iconComponent;
 
-          // Determine which icon set and icon name to use based on the route name
           if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-            iconComponent = <IonIcons name={iconName} size={size} color={color} />;
+            iconComponent = focused
+              ? <IonIcons name="home" size={size} color={color} />
+              : <IonIcons name="home-outline" size={size} color={color} />;
           } else if (route.name === 'Cart') {
-            // 'cart' and 'cart-outline' are common in MaterialCommunityIcons
-            iconName = focused ? 'cart' : 'cart-outline';
-            iconComponent = <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+            iconComponent = focused
+              ? <IonIcons name="cart" size={size} color={color} />
+              : <IonIcons name="cart-outline" size={size} color={color} />;
           } else if (route.name === 'Category') {
-            // 'shape' or 'shape-outline' are good for category in MaterialCommunityIcons
-            // 'category' is a common icon name in MaterialIcons
-          
-            iconName = 'category'  // Using 'category' from MaterialIcons
-            iconComponent = <MaterialIcons name={iconName} size={size} color={color} />;
+            iconComponent = focused
+              ? <MaterialIcons name="category" size={size} color={color} />
+              : <MaterialIcons name="category" size={size} color={color} />; // No outline version for MaterialIcons category
           } else if (route.name === 'Print') {
-            iconName = focused ? 'print' : 'print-outline';
-            iconComponent = <IonIcons name={iconName} size={size} color={color} />;
+            iconComponent = focused
+              ? <MaterialCommunityIcons name="printer" size={size} color={color} />
+              : <MaterialCommunityIcons name="printer-outline" size={size} color={color} />;
           }
 
-          // Render the determined icon component
+          // Ensure the icon component is returned
           return iconComponent;
         },
         tabBarActiveTintColor: '#F7CB45', // Color for the active tab's label/icon
@@ -73,7 +64,7 @@ const Bottomtabnavigation = () => {
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '700',
-          
+
         },
       })}
     >
@@ -82,16 +73,14 @@ const Bottomtabnavigation = () => {
       <Tab.Screen name="Category" component={Categoryscreen} />
       <Tab.Screen name="Print" component={Printscreen} />
     </Tab.Navigator>
-   
+
   );
 };
 
 export default Bottomtabnavigation;
 
-// Define styles for the navigator itself if needed, or remove if only tabBarStyle is used.
+// Define styles for the navigator itself if needed, but typically screenOptions handles most of it.
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        
-      },
+  // No specific styles for Bottomtabnavigation container itself needed here,
+  // as screenOptions handles tab bar styling.
 });

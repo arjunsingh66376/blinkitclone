@@ -42,7 +42,7 @@ const generateRandomWeight = () => {
 
 // --- Cards Component (Default Export) ---
 // This component is for the "Diwali Sale" cards (e.g., Lights, Diyas & Candles)
-const Cards = ({ content, imgkey }) => {
+const Cards = ({ content, imgkey, children }) => {
     const imagemap = {
         diya: imgdiya,
         choco: imgchoco,
@@ -57,6 +57,10 @@ const Cards = ({ content, imgkey }) => {
                 source={imagemap[imgkey]}
                 style={styles.images}
             />
+            {/* Defensive: Render children only if they are valid React elements */}
+            {React.Children.map(children, child =>
+                typeof child === 'string' ? <Text>{child}</Text> : child
+            )}
         </View>
     );
 };
@@ -221,7 +225,8 @@ export const DonationCard = () => {
                 <Text style={styles.donationsubtitle}>
                     Your continued support will help us serve daily meals to children
                 </Text>
-                <Text style={styles.donationLabel}>Donation Now</Text>
+                {/* FIX: Ensure "Donation Now" is wrapped in <Text> */}
+                <Text style={styles.donationLabel}>Donation Now</Text> 
                 {/* Apply the onPress handler here */}
                 <TouchableOpacity style={styles.donationbtn} onPress={handleTapHerePress}>
                     <Text style={styles.taptext}>Tap Here</Text>

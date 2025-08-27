@@ -1,18 +1,52 @@
 import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
-import React, { useState } from 'react'; // useState is kept as it might be used for other purposes later
+import React, { useState } from 'react';
 import Appbar from '../../component/Appbar';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-const Printscreen = () => {
-  // State for selectedFileName is removed as it was tied to DocumentPicker
-  // If you need state for other purposes, you can add it here.
+// Imports for document and image pickers
+import { pick } from '@react-native-documents/picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 
-  // Function to handle the file upload button click (now just a placeholder)
+const Printscreen = () => {
+  const [selectedFileName, setSelectedFileName] = useState(null);
+
+  // Function to open choice dialog and pick either photo or document
   const handleUploadFiles = () => {
-    // This function no longer contains DocumentPicker logic.
-    // It will simply log a message or show an alert.
-    Alert.alert('Feature Not Available', 'File upload functionality is currently disabled.');
-    console.log('Upload Files button pressed. File picker functionality removed.');
+    Alert.alert(
+      'Upload',
+      'Select File Type',
+      [
+        {
+          text: 'Photo',
+          onPress: async () => {
+            try {
+              const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: 1 });
+              if (result.assets && result.assets.length > 0) {
+                setSelectedFileName(result.assets[0].fileName || 'Photo Selected');
+                Alert.alert('Success', 'Photo selected: ' + (result.assets[0].fileName || ''));
+              }
+            } catch (error) {
+              Alert.alert('Error', 'Failed to pick image: ' + error.message);
+            }
+          }
+        },
+        {
+          text: 'Document',
+          onPress: async () => {
+            try {
+              const [res] = await pick({ type: ['*/*'], allowMultiSelection: false });
+              setSelectedFileName(res.name || 'Document Selected');
+              Alert.alert('Success', 'Document selected: ' + (res.name || ''));
+            } catch (err) {
+              if (err?.code !== 'DOCUMENT_PICKER_CANCELED') {
+                Alert.alert('Error', 'Failed to pick document');
+              }
+            }
+          }
+        },
+        { text: 'Cancel', style: 'cancel' },
+      ],
+    );
   };
 
   return (
@@ -47,12 +81,17 @@ const Printscreen = () => {
                 <Text style={styles.buttonText}>Upload Files</Text>
               </TouchableOpacity>
 
-              {/* Display selected file name is removed */}
+              {/* Show selected file name */}
+              {selectedFileName && (
+                <Text style={{ marginTop: 12, fontSize: 14, color: '#4B4B4B' }}>
+                  Selected File: {selectedFileName}
+                </Text>
+              )}
             </View>
 
             {/* Right image */}
             <Image
-              source={require('../../../assets/images/print.png')} // replace with your image path
+              source={require('../../../assets/images/print.png')} // replace with your actual image path
               style={styles.image}
             />
           </View>
@@ -69,19 +108,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f9ecee',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   mainheading: {
     fontSize: 32,
     fontWeight: "bold",
     alignSelf: 'center',
-    marginTop: 60
+    marginTop: 60,
   },
   subheading: {
     fontSize: 14,
     fontWeight: '900',
     alignSelf: 'center',
-    color: '#9C9C9C'
+    color: '#9C9C9C',
   },
   card: {
     flexDirection: 'row',
@@ -93,6 +132,7 @@ const styles = StyleSheet.create({
     padding: 15,
     margin: 10,
     alignItems: 'center',
+    width: '90%',
   },
   leftContent: {
     flex: 1,
@@ -130,5 +170,4 @@ const styles = StyleSheet.create({
     height: 60,
     resizeMode: 'contain',
   },
-  // selectedFileText style is removed as it's no longer used
 });
