@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Image, Alert, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import Appbar from '../../component/Appbar';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -8,9 +8,18 @@ import { pick } from '@react-native-documents/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 
 const Printscreen = () => {
-  const [selectedFileName, setSelectedFileName] = useState(null);
+  // State holds an array of selected file names
+  const [selectedFileNames, setSelectedFileNames] = useState([]);
 
-  // Function to open choice dialog and pick either photo or document
+  // Append new files to existing array (avoiding duplicates)
+  const addSelectedFileName = (name) => {
+    setSelectedFileNames(prev => {
+      if(prev.includes(name)) return prev;
+      return [...prev, name];
+    });
+  };
+
+  // Upload files handler (existing)
   const handleUploadFiles = () => {
     Alert.alert(
       'Upload',
@@ -22,8 +31,9 @@ const Printscreen = () => {
             try {
               const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: 1 });
               if (result.assets && result.assets.length > 0) {
-                setSelectedFileName(result.assets[0].fileName || 'Photo Selected');
-                Alert.alert('Success', 'Photo selected: ' + (result.assets[0].fileName || ''));
+                const fileName = result.assets[0].fileName || 'Photo Selected';
+                addSelectedFileName(fileName);
+                Alert.alert('Success', 'Photo selected: ' + fileName);
               }
             } catch (error) {
               Alert.alert('Error', 'Failed to pick image: ' + error.message);
@@ -34,9 +44,11 @@ const Printscreen = () => {
           text: 'Document',
           onPress: async () => {
             try {
-              const [res] = await pick({ type: ['*/*'], allowMultiSelection: false });
-              setSelectedFileName(res.name || 'Document Selected');
-              Alert.alert('Success', 'Document selected: ' + (res.name || ''));
+              const results = await pick({ type: ['*/*'], allowMultiSelection: true });
+              results.forEach(file => {
+                addSelectedFileName(file.name || 'Document Selected');
+              });
+              Alert.alert('Success', `${results.length} document(s) selected`);
             } catch (err) {
               if (err?.code !== 'DOCUMENT_PICKER_CANCELED') {
                 Alert.alert('Error', 'Failed to pick document');
@@ -49,12 +61,23 @@ const Printscreen = () => {
     );
   };
 
+  // Print document handler - placeholder
+  const handlePrintDocuments = () => {
+    if(selectedFileNames.length === 0) {
+      Alert.alert('No Files', 'Please upload files before printing.');
+      return;
+    }
+    Alert.alert('Print', `Printing ${selectedFileNames.length} document(s)... your document will be delivered shortly`);
+    // Implement your actual print logic here
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Appbar bgcolor={"#F7CB45"} color={"black"} circlebgcolor={"white"} />
       <View style={styles.bg}>
         <Text style={styles.mainheading}>Print Store</Text>
         <Text style={styles.subheading}>Blinkit ensures secure prints at every stage</Text>
+
         <View style={styles.card}>
           <View style={styles.card}>
             {/* Left content */}
@@ -81,12 +104,14 @@ const Printscreen = () => {
                 <Text style={styles.buttonText}>Upload Files</Text>
               </TouchableOpacity>
 
-              {/* Show selected file name */}
-              {selectedFileName && (
-                <Text style={{ marginTop: 12, fontSize: 14, color: '#4B4B4B' }}>
-                  Selected File: {selectedFileName}
-                </Text>
-              )}
+              {/* Render all selected file names */}
+              <ScrollView style={{ marginTop: 12, maxHeight: 150 }}>
+                {selectedFileNames.map((name, index) => (
+                  <Text key={index} style={{ fontSize: 14, color: '#4B4B4B', marginBottom: 4 }}>
+                    {index + 1}. {name}
+                  </Text>
+                ))}
+              </ScrollView>
             </View>
 
             {/* Right image */}
@@ -96,6 +121,12 @@ const Printscreen = () => {
             />
           </View>
         </View>
+
+        {/* New "Print Document" button centered below the white card */}
+        <TouchableOpacity style={styles.printButton} onPress={handlePrintDocuments}>
+          <Text style={styles.buttonText}>Print Document</Text>
+        </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );
@@ -160,10 +191,19 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignSelf: 'flex-start',
   },
+  printButton: {
+    marginTop: 20,
+    backgroundColor: '#28A745',
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    borderRadius: 6,
+    alignSelf: 'center',
+  },
   buttonText: {
     color: '#fff',
     fontWeight: '600',
     fontSize: 14,
+    textAlign: 'center',
   },
   image: {
     width: 60,
