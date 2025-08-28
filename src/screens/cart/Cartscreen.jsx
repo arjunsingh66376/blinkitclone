@@ -216,8 +216,11 @@ const Cartscreen = () => {
                         <View style={styles.billRowLeft}>
                             <MaterialCommunityIcons name="file-document-outline" size={18} color="#333" style={styles.billIcon} />
                             <Text style={styles.billRowLabel}>Items total</Text>
-                            {savings > 0 && <Text style={styles.billSavedText}>Saved ₹{savings.toFixed(0)}</Text>}
+                            {savings > 0 && (
+                                <Text style={styles.billSavedText}>Saved ₹{savings.toFixed(0)}</Text>
+                            )}
                         </View>
+
                         <View style={styles.billRowRight}>
                             <Text style={styles.billPriceText}>₹{itemsTotal.toFixed(0)}</Text>
                         </View>
@@ -229,8 +232,7 @@ const Cartscreen = () => {
                             <Text style={styles.billRowLabel}>Delivery charge</Text>
                         </View>
                         <View style={styles.billRowRight}>
-                            <Text style={styles.billStrikethroughText}>₹25</Text>
-                            <Text style={styles.billFreeText}>FREE</Text>
+                            <Text style={styles.billPriceText}>₹25</Text>
                         </View>
                     </View>
 
@@ -256,37 +258,12 @@ const Cartscreen = () => {
                         </View>
                     )}
 
-                    <View style={styles.billDivider} />
-
-                    <View style={styles.billGrandTotalRow}>
-                        <Text style={styles.billGrandTotalLabel}>Grand total</Text>
-                        <Text style={styles.billGrandTotalPrice}>₹{grandTotal.toFixed(0)}</Text>
-                    </View>
-
                     {savings > 0 && (
                         <View style={styles.billSavingsContainer}>
                             <Text style={styles.billSavingsText}>Your total savings</Text>
-                            <Text style={styles.billSavingsAmount}>₹{savings.toFixed(0)}</Text>
+                            <Text style={styles.billSavingsValue}>₹{savings.toFixed(0)}</Text>
                         </View>
                     )}
-                    <Text style={styles.billSavingsIncludesText}>
-                        Includes ₹25 savings through free delivery
-                    </Text>
-
-                    <TouchableOpacity style={styles.billGstinButton}>
-                        <View style={styles.billGstinLeft}>
-                            <View style={styles.billGstinIconWrapper}>
-                                <MaterialCommunityIcons name="percent" size={20} color="#3498db" />
-                            </View>
-                            <View>
-                                <Text style={styles.billGstinMainText}>Add GSTIN</Text>
-                                <Text style={styles.billGstinSubText}>
-                                    Claim GST input credit up to 28% on your order
-                                </Text>
-                            </View>
-                        </View>
-                        <Ionicons name="chevron-forward-outline" size={20} color="#888" />
-                    </TouchableOpacity>
                 </View>
                 <DonationCard />
             </ScrollView>
@@ -468,7 +445,7 @@ const styles = StyleSheet.create({
         color: '#007B8A',
         fontWeight: '600',
     },
-    billSavingsAmount: {
+    billSavingsValue: {
         fontSize: 16,
         fontWeight: 'bold',
         color: '#007B8A',

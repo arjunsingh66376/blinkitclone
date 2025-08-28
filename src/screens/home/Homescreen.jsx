@@ -1,4 +1,3 @@
-// src/screens/Homescreen.js
 import { Image, SafeAreaView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import Appbar from '../../component/Appbar';
@@ -20,7 +19,6 @@ import img250 from '../../../assets/images/img250.png';
 import img260 from '../../../assets/images/img260.png';
 import img270 from '../../../assets/images/img270.png';
 
-
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { useCart } from '../../context/Cartcontext';
@@ -28,7 +26,6 @@ import Toast from 'react-native-toast-message';
 
 // <--- NEW: Import ALL_PRODUCTS for direct use or reference if needed
 import { ALL_PRODUCTS } from '../data/products';
-
 
 const Homescreen = () => {
   const navigation = useNavigation();
@@ -68,7 +65,6 @@ const Homescreen = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       {/* app bar custom component */}
-      {/* <--- Pass the new onSearchSubmit prop */}
       <Appbar bgcolor={"#EC0505"} color={"white"} circlebgcolor={"white"} onSearchSubmit={handleSearchSubmit} />
 
       {/* offer banner */}
@@ -104,7 +100,6 @@ const Homescreen = () => {
           <Cards content='Home & Living' imgkey='home'>
           </Cards>
         </View>
-
       </View>
 
       {/* ========================================================================================== */}
@@ -113,15 +108,56 @@ const Homescreen = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.Itemcardwrapper}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {/* Use ALL_PRODUCTS for consistency, or keep as is if these are hardcoded examples */}
-              {/* For now, keeping your existing hardcoded data structure here, but ideally it would map from ALL_PRODUCTS */}
-              <ItemCard title="Golden Glass Wooden Lid Candle (Oudh)" deliveryTime="16 Mins" price="₹ 79" productImage={img110} onAddPress={() => handleAddItem({ id: 'item1', title: "Golden Glass Wooden Lid Candle (Oudh)", deliveryTime: "16 Mins", price: "79", productImage: img110 })} />
-              <ItemCard title="Royal Gulab Jamun By Bikano" deliveryTime="10 Mins" price="₹ 49" productImage={img120} onAddPress={() => handleAddItem({ id: 'item2', title: "Royal Gulab Jamun By Bikano", deliveryTime: "10 Mins", price: "49", productImage: img120 })} />
-              <ItemCard title="Bikaji Bhujia" deliveryTime="30 Mins" price="₹ 119" productImage={img130} onAddPress={() => handleAddItem({ id: 'item3', title: "Bikaji Bhujia", deliveryTime: "30 Mins", price: "119", productImage: img130 })} />
-              <ItemCard title="Millineans" deliveryTime="2 Mins" price="₹ 10" productImage={img140} onAddPress={() => handleAddItem({ id: 'item4', title: "Millineans", deliveryTime: "2 Mins", price: "10", productImage: img140 })} />
-              <ItemCard title="Montex Pens" deliveryTime="7 Mins" price="₹ 200" productImage={img150} onAddPress={() => handleAddItem({ id: 'item5', title: "Montex Pens", deliveryTime: "7 Mins", price: "200", productImage: img150 })} />
-              <ItemCard title="Bansiram Gulab Jamun" deliveryTime="30 Mins" price="₹ 32" productImage={img160} onAddPress={() => handleAddItem({ id: 'item6', title: "Bansiram Gulab Jamun", deliveryTime: "30 Mins", price: "32", productImage: img160 })} />
-              <ItemCard title="Durex Condem" deliveryTime="15 Mins" price="₹ 450" productImage={img270} onAddPress={() => handleAddItem({ id: 'item7', title: "Durex Condem", deliveryTime: "15 Mins", price: "450", productImage: img270 })} />
+              {/* Your existing hardcoded ItemCards */}
+              <ItemCard
+                title="Golden Glass Wooden Lid Candle (Oudh)"
+                deliveryTime="16 Mins"
+                price="₹ 79"
+                productImage={img110}
+                onAddPress={() => handleAddItem({ id: 'item1', title: "Golden Glass Wooden Lid Candle (Oudh)", deliveryTime: "16 Mins", price: "79", productImage: img110 })}
+              />
+              <ItemCard
+                title="Royal Gulab Jamun By Bikano"
+                deliveryTime="10 Mins"
+                price="₹ 49"
+                productImage={img120}
+                onAddPress={() => handleAddItem({ id: 'item2', title: "Royal Gulab Jamun By Bikano", deliveryTime: "10 Mins", price: "49", productImage: img120 })}
+              />
+              <ItemCard
+                title="Bikaji Bhujia"
+                deliveryTime="30 Mins"
+                price="₹ 119"
+                productImage={img130}
+                onAddPress={() => handleAddItem({ id: 'item3', title: "Bikaji Bhujia", deliveryTime: "30 Mins", price: "119", productImage: img130 })}
+              />
+              <ItemCard
+                title="Millineans"
+                deliveryTime="2 Mins"
+                price="₹ 10"
+                productImage={img140}
+                onAddPress={() => handleAddItem({ id: 'item4', title: "Millineans", deliveryTime: "2 Mins", price: "10", productImage: img140 })}
+              />
+              <ItemCard
+                title="Montex Pens"
+                deliveryTime="7 Mins"
+                price="₹ 200"
+                productImage={img150}
+                onAddPress={() => handleAddItem({ id: 'item5', title: "Montex Pens", deliveryTime: "7 Mins", price: "200", productImage: img150 })}
+              />
+              <ItemCard
+                title="Bansiram Gulab Jamun"
+                deliveryTime="30 Mins"
+                price="₹ 32"
+                productImage={img160}
+                onAddPress={() => handleAddItem({ id: 'item6', title: "Bansiram Gulab Jamun", deliveryTime: "30 Mins", price: "32", productImage: img160 })}
+              />
+              <ItemCard
+                title="Durex Condem"
+                deliveryTime="15 Mins"
+                price="₹ 450"
+                productImage={img270}
+                onAddPress={() => handleAddItem({ id: 'item7', title: "Durex Condem", deliveryTime: "15 Mins", price: "450", productImage: img270 })}
+              />
             </ScrollView>
           </View>
 
@@ -130,16 +166,16 @@ const Homescreen = () => {
           {/* grocery wrapper */}
           <View style={styles.grocerywrapper}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {/* Add an onPress to GroceryCard */}
+              {/* Grocery cards with onPress to add to cart */}
               <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery1', title: 'Vegetables & Fruits', imageSource: img200, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img200} title='Vegetables & Fruits' />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery2', title: 'Atta, Dal & Rice', imageSource: img210, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img210} title='Atta, Dal & Rice' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery3', title: 'Oil, Ghee & Masala', imageSource: img220, price: '0', weight: 'Various' })}>
-                <GroceryCard imageSource={img220} title='Oil, Ghee & Masala' />
-              </TouchableOpacity>
+             <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery3', title: 'Oil, Ghee & Masala', imageSource: img220, price: '0', weight: 'Various' })}>
+  <GroceryCard imageSource={img220} title='Oil, Ghee & Masala' />
+</TouchableOpacity>
               <TouchableOpacity onPress={() => handleGroceryCardPress({ id: 'grocery4', title: 'Dairy, Bread & Milk', imageSource: img230, price: '0', weight: 'Various' })}>
                 <GroceryCard imageSource={img230} title='Dairy, Bread & Milk' />
               </TouchableOpacity>
@@ -159,6 +195,9 @@ const Homescreen = () => {
           </View>
         </ScrollView>
       </View>
+
+      {/* Toast component to show messages on this screen */}
+      
     </SafeAreaView>
   );
 };
@@ -170,78 +209,71 @@ const styles = StyleSheet.create({
     height: 200,
     width: '100%',
     backgroundColor: '#EC0505',
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   offerheadingrow: {
     width: '100%',
     height: 60,
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   img1wrapper: {
     width: 100,
     height: 59,
-    display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   img1big: {
     width: 50,
-    height: 58
+    height: 58,
   },
   img2small: {
     width: 50,
-    height: 47
+    height: 47,
   },
   heading: {
     fontSize: 20,
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: "white"
+    color: 'white',
   },
   img2wrapper: {
     width: 100,
     height: 59,
-    display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   img3small: {
     width: 50,
-    height: 47
+    height: 47,
   },
   img4big: {
     width: 50,
-    height: 58
+    height: 58,
   },
   cardrow: {
     flex: 1,
     width: '100%',
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
-  // hero section  start from here
   herosectionbg: {
     flex: 1,
-    backgroundColor: "white",
-    padding: 10
+    backgroundColor: 'white',
+    padding: 10,
   },
   Itemcardwrapper: {
     height: 300,
-    display: 'flex',
-    flexDirection: "row",
+    flexDirection: 'row',
     marginRight: 20,
-    marginTop: 20
+    marginTop: 20,
   },
   grocerytext: {
     fontSize: 17,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingHorizontal: 20,
   },
   grocerywrapper: {
     flex: 1,
     marginVertical: 15,
-    display: 'flex',
-    flexDirection: "row",
+    flexDirection: 'row',
   },
 });

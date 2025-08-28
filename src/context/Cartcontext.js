@@ -117,6 +117,9 @@ export const CartProvider = ({ children }) => {
         setCartItems((prevItems) => prevItems.filter((item) => item.title !== title));
     };
 
+    // NEW: clear all items
+    const clearCart = () => setCartItems([]);
+
     return (
         <CartContext.Provider
             value={{
@@ -125,6 +128,7 @@ export const CartProvider = ({ children }) => {
                 increaseQuantity,
                 decreaseQuantity,
                 removeFromCart,
+                clearCart, // <-- include here
             }}
         >
             {children}

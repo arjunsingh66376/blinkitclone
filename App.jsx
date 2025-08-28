@@ -1,6 +1,4 @@
-// App.jsx (MODIFIED)
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -62,22 +60,18 @@ const App = () => {
           <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
               {loggedInLocally ? (
-                // User is "logged in" locally, show the main app with bottom tabs
-                // AND other screens accessible from within the main app flow
                 <>
                   <Stack.Screen name="Bottomtabnavigation" component={Bottomtabnavigation} />
-                  {/* <--- NEW: Place SearchScreen here, accessible from anywhere within Bottomtabnavigation's children */}
                   <Stack.Screen name="Search" component={SearchScreen} />
-                  {/* You might also add other full-screen modals or flows here */}
                 </>
               ) : (
-                // No user is "logged in" locally, show the login screen
                 <Stack.Screen name="Login">
                   {props => <Loginscreen {...props} onDirectLoginSuccess={() => setLoggedInLocally(true)} />}
                 </Stack.Screen>
               )}
             </Stack.Navigator>
           </NavigationContainer>
+          {/* Toast component mounted once at app root */}
           <Toast />
         </CartProvider>
       </SafeAreaProvider>

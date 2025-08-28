@@ -8,18 +8,23 @@ import { pick } from '@react-native-documents/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 
 const Printscreen = () => {
-  // State holds an array of selected file names
-  const [selectedFileNames, setSelectedFileNames] = useState([]);
+  // State holds an array of selected files (objects with name and key)
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
-  // Append new files to existing array (avoiding duplicates)
-  const addSelectedFileName = (name) => {
-    setSelectedFileNames(prev => {
-      if(prev.includes(name)) return prev;
-      return [...prev, name];
+  // Add new files avoiding duplicates by name
+  const addSelectedFile = (name) => {
+    setSelectedFiles((prev) => {
+      if (prev.find(f => f.name === name)) return prev;
+      return [...prev, { name, key: Math.random().toString() }];
     });
   };
 
-  // Upload files handler (existing)
+  // Remove file by key
+  const removeSelectedFile = (key) => {
+    setSelectedFiles((prev) => prev.filter(f => f.key !== key));
+  };
+
+  // Upload files handler
   const handleUploadFiles = () => {
     Alert.alert(
       'Upload',
@@ -32,7 +37,7 @@ const Printscreen = () => {
               const result = await launchImageLibrary({ mediaType: 'photo', selectionLimit: 1 });
               if (result.assets && result.assets.length > 0) {
                 const fileName = result.assets[0].fileName || 'Photo Selected';
-                addSelectedFileName(fileName);
+                addSelectedFile(fileName);
                 Alert.alert('Success', 'Photo selected: ' + fileName);
               }
             } catch (error) {
@@ -46,7 +51,7 @@ const Printscreen = () => {
             try {
               const results = await pick({ type: ['*/*'], allowMultiSelection: true });
               results.forEach(file => {
-                addSelectedFileName(file.name || 'Document Selected');
+                addSelectedFile(file.name || 'Document Selected');
               });
               Alert.alert('Success', `${results.length} document(s) selected`);
             } catch (err) {
@@ -61,14 +66,14 @@ const Printscreen = () => {
     );
   };
 
-  // Print document handler - placeholder
+  // Print document handler placeholder
   const handlePrintDocuments = () => {
-    if(selectedFileNames.length === 0) {
+    if (selectedFiles.length === 0) {
       Alert.alert('No Files', 'Please upload files before printing.');
       return;
     }
-    Alert.alert('Print', `Printing ${selectedFileNames.length} document(s)... your document will be delivered shortly`);
-    // Implement your actual print logic here
+    Alert.alert('Print', `Printing ${selectedFiles.length} document(s)... your documents will be delivered shortly.`);
+    // Add actual printing logic here
   };
 
   return (
@@ -104,25 +109,28 @@ const Printscreen = () => {
                 <Text style={styles.buttonText}>Upload Files</Text>
               </TouchableOpacity>
 
-              {/* Render all selected file names */}
+              {/* Render all selected file names with remove button */}
               <ScrollView style={{ marginTop: 12, maxHeight: 150 }}>
-                {selectedFileNames.map((name, index) => (
-                  <Text key={index} style={{ fontSize: 14, color: '#4B4B4B', marginBottom: 4 }}>
-                    {index + 1}. {name}
-                  </Text>
+                {selectedFiles.map((file, index) => (
+                  <View key={file.key} style={styles.fileItem}>
+                    <Text style={styles.fileName}>{index + 1}. {file.name}</Text>
+                    <TouchableOpacity onPress={() => removeSelectedFile(file.key)} style={styles.removeButton}>
+                      <Text style={styles.removeButtonText}>×</Text>
+                    </TouchableOpacity>
+                  </View>
                 ))}
               </ScrollView>
             </View>
 
             {/* Right image */}
             <Image
-              source={require('../../../assets/images/print.png')} // replace with your actual image path
+              source={require('../../../assets/images/print.png')}
               style={styles.image}
             />
           </View>
         </View>
 
-        {/* New "Print Document" button centered below the white card */}
+        {/* Print Document button */}
         <TouchableOpacity style={styles.printButton} onPress={handlePrintDocuments}>
           <Text style={styles.buttonText}>Print Document</Text>
         </TouchableOpacity>
@@ -209,5 +217,35 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     resizeMode: 'contain',
+  },
+  fileItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  fileName: {
+    fontSize: 14,
+    color: '#4B4B4B',
+    flexShrink: 1,
+  },
+  removeButton: {
+    marginLeft: 10,
+    backgroundColor: '#cccccc',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  removeButtonText: {
+    fontSize: 18,
+    lineHeight: 18,
+    color: '#333',
+    fontWeight: 'bold',
   },
 });

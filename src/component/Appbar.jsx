@@ -6,78 +6,78 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit = () => {} }) => {
   const [query, setQuery] = useState('');
 
-  // State for Address Management
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [currentAddress, setCurrentAddress] = useState("Arjun Singh, Ratanada, Jodhpur (Raj)");
-  const [tempAddress, setTempAddress] = useState(currentAddress); // Temporary state for modal input
+  const [tempAddress, setTempAddress] = useState(currentAddress);
 
-  // Logic for mic button in app bar
   const handlemic = () => {
     console.log("mic is pressed");
   };
 
-  // Handle search submission
   const handleSearch = () => {
     if (query.trim()) {
       onSearchSubmit(query.trim());
     }
   };
 
-  // Address Modal Handlers
   const handleOpenAddressModal = () => {
-    setTempAddress(currentAddress); // Set temp address to current before opening
+    setTempAddress(currentAddress);
     setShowAddressModal(true);
   };
 
   const handleSaveAddress = () => {
-    setCurrentAddress(tempAddress); // Update current address with temp
+    setCurrentAddress(tempAddress);
     setShowAddressModal(false);
   };
 
   const handleCancelAddressEdit = () => {
-    setShowAddressModal(false); // Just close the modal without saving
+    setShowAddressModal(false);
   };
 
   return (
-    // app bar bg
     <View style={[styles.bg, { backgroundColor: bgcolor }]}>
-
-      <Text style={[styles.txt1, { color: color }]}>Blinkit in</Text>
-      <View style={styles.txt2wrapper}>
-        <Text style={[styles.txt2, { color: color }]}>16 minutes</Text>
-
-        {/* user image - Reverted to a simple View, no longer TouchableOpacity */}
+      {/* TOP ROW (Blinkit in, 16 minutes, avatar) */}
+      <View style={styles.headerTop}>
+        <View>
+          <Text style={[styles.txt1, { color: color }]}>Blinkit in</Text>
+          <Text style={[styles.txt2, { color: color }]}>16 minutes</Text>
+        </View>
         <View style={[styles.circle, { backgroundColor: circlebgcolor }]}>
           <Image source={require('../../assets/images/user_black.png')} style={styles.userimg} />
         </View>
       </View>
-      {/* TouchableOpacity for address dropdown */}
-      <TouchableOpacity onPress={handleOpenAddressModal} style={styles.txt3wrapper}>
-        <Text style={[styles.txt3, { color: color }]}>HOME -</Text>
-        <Text style={[styles.txt4, { color: color }]} numberOfLines={1} ellipsizeMode="tail">{currentAddress}</Text>
-        <Icon name="caret-down" size={20} color={color} />
+
+      {/* ADDRESS ROW */}
+      <TouchableOpacity onPress={handleOpenAddressModal} style={styles.txt3wrapper} activeOpacity={0.8}>
+        <View style={styles.addressRow}>
+          <Text style={[styles.txt3, { color: color }]}>HOME -</Text>
+          <Text style={[styles.txt4, { color: color }]} numberOfLines={1} ellipsizeMode="tail">{currentAddress}</Text>
+          <View style={styles.iconWrapper}>
+            <Icon name="caret-down" size={18} color={color} />
+          </View>
+        </View>
       </TouchableOpacity>
 
-      {/* search bar */}
+      {/* SEARCH BAR */}
       <View style={styles.searchbar}>
-        <TouchableOpacity onPress={handleSearch}>
+        <TouchableOpacity onPress={handleSearch} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
           <Ionicons name="search" size={18} color={color} />
         </TouchableOpacity>
         <RNTextInput
           style={styles.textinput}
-          placeholder='Search For Items ...'
+          placeholder="Search For Items ..."
           placeholderTextColor="#9C9C9C"
           value={query}
           onChangeText={setQuery}
           onSubmitEditing={handleSearch}
           returnKeyType="search"
         />
-        <TouchableOpacity onPress={handlemic}>
-          <Icon name='microphone' size={18} color={color} />
+        <TouchableOpacity onPress={handlemic} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Icon name="microphone" size={18} color={color} />
         </TouchableOpacity>
       </View>
 
-      {/* Address Edit Modal */}
+      {/* ADDRESS EDIT MODAL */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -115,27 +115,28 @@ const Appbar = ({ bgcolor, color, circlebgcolor, onSearchSubmit = () => {} }) =>
           </View>
         </Pressable>
       </Modal>
-
     </View>
   );
 };
 
 export default Appbar;
 
-// =========================================================================================
-// app bar for checkout
+// Checkout Appbar stays unchanged.
+
 export const CheckoutAppbar = ({ onBackPress, onSharePress }) => {
   return (
     <View style={styles.appbarContainer}>
-      <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
-        <Ionicons name="arrow-back" size={32} color="#333" />
+      <TouchableOpacity onPress={onBackPress} style={styles.backButton} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <Ionicons name="arrow-back" size={28} color="#333" />
       </TouchableOpacity>
 
       <Text style={styles.checkouttitleText}>Checkout</Text>
 
-      <TouchableOpacity onPress={onSharePress} style={styles.shareButton}>
-        <Ionicons name="cart-outline" size={24} color="#52B788" />
-        <Text style={styles.shareText}>Share</Text>
+      <TouchableOpacity onPress={onSharePress} style={styles.shareButton} activeOpacity={0.8}>
+        <View style={styles.shareRow}>
+          <Ionicons name="cart-outline" size={20} color="#52B788" />
+          <Text style={styles.shareText}>Share</Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -148,28 +149,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 20
   },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   txt1: {
     fontSize: 12,
     fontWeight: "bold",
   },
-  txt2wrapper: {
-    display: 'flex',
-    flexDirection: "row",
-    justifyContent: 'space-between',
-    marginTop: 3
-  },
   txt2: {
     fontSize: 20,
     fontWeight: "bold",
+    marginTop: 3,
   },
   circle: {
     borderRadius: 16,
-    display: 'flex',
     alignItems: "center",
     justifyContent: "center",
     height: 32,
     width: 32,
-    marginRight: 20
+    marginLeft: 10
   },
   userimg: {
     height: 15,
@@ -177,9 +177,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   txt3wrapper: {
-    display: 'flex',
+    marginVertical: 10,
+  },
+  addressRow: {
     flexDirection: 'row',
-    marginBottom: 15,
     alignItems: 'center',
   },
   txt3: {
@@ -192,7 +193,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     flexShrink: 1,
-    marginRight: 10
+    marginRight: 8
+  },
+  iconWrapper: {
+    paddingLeft: 4,
   },
   searchbar: {
     width: '100%',
@@ -235,14 +239,16 @@ const styles = StyleSheet.create({
     marginLeft: -24,
   },
   shareButton: {
+    padding: 5,
+  },
+  shareRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 5,
   },
   shareText: {
     fontSize: 16,
     color: '#52B788',
-    marginLeft: 5,
+    marginLeft: 8,
   },
   centeredView: {
     flex: 1,
