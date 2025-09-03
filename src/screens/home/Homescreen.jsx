@@ -54,6 +54,7 @@ const Homescreen = () => {
       visibilityTime: 2000,
       autoHide: true,
       topOffset: 30,
+        zIndex: 9999,
     });
   };
 
