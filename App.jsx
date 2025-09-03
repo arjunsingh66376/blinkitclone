@@ -20,7 +20,6 @@ import SearchScreen from './src/screens/searchscreen/SearchScreen'; // Ensure th
 const Stack = createNativeStackNavigator();
 
 const App = () => {
-  console.reportErrorsAsExceptions = false;
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
   const [loggedInLocally, setLoggedInLocally] = useState(false);

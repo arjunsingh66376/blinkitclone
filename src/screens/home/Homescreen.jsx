@@ -40,7 +40,7 @@ const Homescreen = () => {
       text2: `${item.title} has been added.`,
       visibilityTime: 2000,
       autoHide: true,
-      topOffset: 30,
+      // topOffset: 30,
     });
   };
 
@@ -196,7 +196,7 @@ const Homescreen = () => {
         </ScrollView>
       </View>
 
-      {/* Toast component to show messages on this screen */}
+    
       
     </SafeAreaView>
   );
