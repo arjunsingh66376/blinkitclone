@@ -150,27 +150,35 @@ export const Checkoutitemcard = ({ imageSource, title, weight, price, originalPr
 
 // =========================================================================================
 // gift banner  card
-export const GiftBanner = ({ onPressSelect }) => {
-    return (
-        <View style={styles.bannerContainer}>
-            <Image
-                source={require('../../assets/images/shoppingbag.png')}
-                style={styles.giftBagImage}
-            />
+export const GiftBanner = ({ onPressSelect, isSelected }) => {
+  return (
+    <View style={styles.bannerContainer}>
+      <Image
+        source={require('../../assets/images/shoppingbag.png')}
+        style={styles.giftBagImage}
+      />
 
-            <View style={styles.textContainer}>
-                <Text style={styles.mainText}>Make this a gift!</Text>
-                <Text style={styles.subText}>
-                    Get your items in a special gift bag for just <Text style={styles.priceText}>₹30</Text>
-                </Text>
-            </View>
+      <View style={styles.textContainer}>
+        <Text style={styles.mainText}>Make this a gift!</Text>
 
-            <TouchableOpacity style={styles.selectButton} onPress={onPressSelect}>
-                <Text style={styles.selectButtonText}>Select</Text>
-            </TouchableOpacity>
+        {/* Keep your original look: subText + priceText, both inside <Text> */}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+          <Text style={styles.subText}>
+            Get your items in a special gift bag for just{' '}
+          </Text>
+          <Text style={styles.priceText}>₹30</Text>
         </View>
-    );
+      </View>
+
+      <TouchableOpacity style={styles.selectButton} onPress={onPressSelect}>
+        <Text style={styles.selectButtonText}>
+          {isSelected ? 'Selected' : 'Select'}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 };
+
 // =====================================================================================
 // donation banner card
 export const DonationCard = () => {

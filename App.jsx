@@ -14,9 +14,13 @@ import Loginscreen from './src/screens/login/Loginscreen';
 import { CartProvider } from './src/context/Cartcontext';
 import SearchScreen from './src/screens/searchscreen/SearchScreen'; // Ensure this path is correct
 
+
+
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+  console.reportErrorsAsExceptions = false;
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
   const [loggedInLocally, setLoggedInLocally] = useState(false);
